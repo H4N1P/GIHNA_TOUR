@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Foto;
 use App\Models\Gallery;
 use App\Models\Paket;
+use Illuminate\Database\QueryException;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Http\Request;
 
 class PageController extends Controller
@@ -15,14 +17,19 @@ class PageController extends Controller
      */
     public function index()
     {
-        $pakets = Paket::with(['fasilitas', 'tempats'])
-            ->orderBy('created_at', 'desc')
-            ->take(6)
-            ->get();
+        try {
+            $pakets = Paket::with(['fasilitas', 'tempats.galleries', 'fotos'])
+                ->orderBy('created_at', 'desc')
+                ->take(6)
+                ->get();
 
-        $fotos = Gallery::orderBy('created_at', 'desc')
-            ->take(8)
-            ->get();
+            $fotos = Gallery::orderBy('created_at', 'desc')
+                ->take(8)
+                ->get();
+        } catch (QueryException) {
+            $pakets = collect();
+            $fotos = collect();
+        }
 
         return view('customer.index', compact('pakets', 'fotos'));
     }
@@ -30,13 +37,24 @@ class PageController extends Controller
     /**
      * Display all packages page.
      */
-    public function packages()
+    public function packages(Request $request)
     {
-        $pakets = Paket::with(['fasilitas', 'tempats'])
-            ->orderBy('created_at', 'desc')
-            ->paginate(9);
+        $query = trim((string) $request->input('q', ''));
 
-        return view('customer.packages', compact('pakets'));
+        try {
+            $pakets = Paket::with(['fasilitas', 'tempats.galleries', 'fotos'])
+                ->when($query !== '', function ($builder) use ($query) {
+                    $builder->where('nama_paket', 'like', "%{$query}%");
+                })
+                ->orderBy('created_at', 'desc')
+                ->paginate(12)
+                ->withQueryString();
+        } catch (QueryException) {
+            $pakets = new LengthAwarePaginator([], 0, 12);
+            $pakets->withPath(route('packages'));
+        }
+
+        return view('customer.packages', compact('pakets', 'query'));
     }
 
     /**
@@ -56,8 +74,13 @@ class PageController extends Controller
      */
     public function photos()
     {
-        $fotos = Gallery::orderBy('created_at', 'desc')
-            ->paginate(12);
+        try {
+            $fotos = Gallery::orderBy('created_at', 'desc')
+                ->paginate(12);
+        } catch (QueryException) {
+            $fotos = new LengthAwarePaginator([], 0, 12);
+            $fotos->withPath(route('photos'));
+        }
 
         return view('customer.photos', compact('fotos'));
     }
@@ -67,15 +90,6 @@ class PageController extends Controller
      */
     public function search(Request $request)
     {
-        $query = $request->input('q');
-
-        $pakets = Paket::with(['fasilitas', 'tempats'])
-            ->where(function ($q) use ($query) {
-                $q->where('nama_paket', 'like', "%{$query}%");
-            })
-            ->orderBy('created_at', 'desc')
-            ->paginate(9);
-
-        return view('customer.packages', compact('pakets', 'query'));
+        return redirect()->route('packages', ['q' => $request->input('q')]);
     }
 }

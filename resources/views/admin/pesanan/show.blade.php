@@ -289,7 +289,8 @@
             <div
                 class="px-8 py-4 bg-neutral-50 dark:bg-neutral-800/50 border-t border-neutral-100 dark:border-neutral-800 flex justify-end">
                 <form action="{{ route('admin.pesanan.destroy', $pesanan->id) }}" method="POST"
-                    onsubmit="return confirm('Yakin hapus pesanan {{ $pesanan->invoice }}?')">
+                    data-confirm="delete" data-confirm-title="Apakah anda yakin menghapus pesanan?"
+                    data-confirm-message="Data akan hilang dan tidak bisa dikembalikan">
                     @csrf @method('DELETE')
                     <button type="submit" class="text-sm text-red-600 dark:text-red-400 hover:underline">
                         Hapus Pesanan

@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\CompanyProfile;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +22,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        \Illuminate\Support\Facades\View::share('companyProfile', \App\Models\CompanyProfile::first());
+        try {
+            View::share('companyProfile', CompanyProfile::first());
+        } catch (QueryException) {
+            View::share('companyProfile', null);
+        }
     }
 }

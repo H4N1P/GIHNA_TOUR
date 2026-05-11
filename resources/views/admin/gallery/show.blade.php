@@ -58,7 +58,8 @@
 
             <div class="px-4 lg:px-6 pb-6 flex justify-end">
                 <form action="{{ route('admin.gallery.destroy', $gallery->id) }}" method="POST"
-                    onsubmit="return confirm('Yakin hapus foto ini?')">
+                    data-confirm="delete" data-confirm-title="Apakah anda yakin menghapus media?"
+                    data-confirm-message="Data akan hilang dan tidak bisa dikembalikan">
                     @csrf @method('DELETE')
                     <button type="submit"
                         class="px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors">

@@ -392,7 +392,8 @@
                                     </a>
 
                                     <form action="{{ route('admin.paket.destroy', $paket->id) }}" method="POST"
-                                        class="inline" onsubmit="return confirmHapus(event, '{{ $paket->nama_paket }}')">
+                                        class="inline" data-confirm="delete" data-confirm-title="Apakah anda yakin menghapus paket?"
+                                        data-confirm-message="Data akan hilang dan tidak bisa dikembalikan">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn-danger" title="Hapus">
@@ -451,76 +452,4 @@
             </div>
         @endif
     </div>
-
-    {{-- Modal hapus (tidak berubah) --}}
-    <div id="deleteModal"
-        style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);
-            z-index:999;align-items:center;justify-content:center;">
-        <div
-            style="background:var(--bg-card);border-radius:16px;padding:28px;
-              max-width:440px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.3);
-              border:1px solid var(--border);">
-            <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;">
-                <div
-                    style="width:46px;height:46px;border-radius:50%;background:#FEE2E2;
-                  display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                    <svg style="width:22px;height:22px;color:#ef4444;" fill="none" stroke="currentColor"
-                        viewBox="0 0 24 24" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858
-                                                   L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
-                </div>
-                <div>
-                    <h3 style="font-size:16px;font-weight:700;color:var(--text);margin:0 0 4px;">
-                        Hapus Paket?
-                    </h3>
-                    <p id="deleteModalName" style="font-size:13px;color:var(--text-muted);margin:0;">
-                        Paket ini akan dihapus permanen.
-                    </p>
-                </div>
-            </div>
-            <div style="display:flex;gap:10px;justify-content:flex-end;">
-                <button onclick="closeDeleteModal()"
-                    style="padding:9px 20px;border-radius:8px;border:1px solid var(--border);
-                     background:transparent;color:var(--text-muted);font-weight:600;
-                     font-size:13px;cursor:pointer;">
-                    Batal
-                </button>
-                <button id="confirmDeleteBtn"
-                    style="padding:9px 20px;border-radius:8px;background:#ef4444;
-                     color:#fff;font-weight:600;font-size:13px;border:none;cursor:pointer;">
-                    Ya, Hapus
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // ── Modal hapus — intercept form submit, tampilkan modal dulu ──────────
-        let _pendingForm = null;
-
-        function confirmHapus(e, nama) {
-            e.preventDefault();
-            _pendingForm = e.target;
-            document.getElementById('deleteModalName').textContent =
-                '"' + nama + '" akan dihapus secara permanen.';
-            const modal = document.getElementById('deleteModal');
-            modal.style.display = 'flex';
-        }
-
-        document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
-            if (_pendingForm) _pendingForm.submit();
-        });
-
-        function closeDeleteModal() {
-            document.getElementById('deleteModal').style.display = 'none';
-            _pendingForm = null;
-        }
-
-        // Klik backdrop → tutup
-        document.getElementById('deleteModal').addEventListener('click', function(e) {
-            if (e.target === this) closeDeleteModal();
-        });
-    </script>
-
 @endsection

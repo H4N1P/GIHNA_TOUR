@@ -396,7 +396,6 @@
 @endsection
 
 @push('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.49.0/dist/apexcharts.min.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
 
@@ -555,7 +554,7 @@
             @endif
 
             // Reload saat dark mode toggle supaya warna axis ikut berubah
-            const themeToggle = document.getElementById('themeToggle');
+            const themeToggle = document.getElementById('adminThemeToggle');
             if (themeToggle) {
                 themeToggle.addEventListener('change', () => {
                     setTimeout(() => location.reload(), 150);

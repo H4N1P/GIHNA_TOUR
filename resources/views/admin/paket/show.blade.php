@@ -177,7 +177,8 @@
             <div class="px-4 lg:px-6 py-4 bg-neutral-50 dark:bg-neutral-800/50 flex items-center justify-between">
                 <p class="text-xs text-neutral-400">Diperbarui: {{ $paket->updated_at->format('d M Y, H:i') }}</p>
                 <form action="{{ route('admin.paket.destroy', $paket->id) }}" method="POST"
-                    onsubmit="return confirm('Yakin hapus paket ini? Semua data terkait ikut terhapus.')">
+                    data-confirm="delete" data-confirm-title="Apakah anda yakin menghapus paket?"
+                    data-confirm-message="Semua data terkait ikut terhapus dan tidak bisa dikembalikan">
                     @csrf @method('DELETE')
                     <button type="submit"
                         class="inline-flex items-center gap-1.5 text-sm text-red-600 dark:text-red-400 hover:underline">

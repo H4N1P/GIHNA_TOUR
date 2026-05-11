@@ -22,6 +22,11 @@ Route::get('/packages/search', [PageController::class, 'search'])->name('package
 Route::get('/package/{id}', [PageController::class, 'packageDetail'])->name('package.detail');
 Route::get('/photos', [PageController::class, 'photos'])->name('photos');
 
+Route::prefix('api/public-chatbot')->name('public-chatbot.')->group(function () {
+    Route::get('/menu', [ChatbotController::class, 'getPublicMenu'])->name('menu');
+    Route::post('/message', [ChatbotController::class, 'handlePublicMessage'])->name('message');
+});
+
 // Auth
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);

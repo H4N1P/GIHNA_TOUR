@@ -59,7 +59,8 @@
                             </svg>
                         </a>
                         <form action="{{ route('admin.gallery.destroy', $g->id) }}" method="POST"
-                            onsubmit="return confirm('Hapus media ini?')">
+                            data-confirm="delete" data-confirm-title="Apakah anda yakin menghapus media?"
+                            data-confirm-message="Data akan hilang dan tidak bisa dikembalikan">
                             @csrf @method('DELETE')
                             <button type="submit"
                                 class="p-2 bg-white rounded-lg text-red-600 hover:bg-red-50 transition-colors">

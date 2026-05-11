@@ -2,113 +2,117 @@ document.addEventListener('DOMContentLoaded', () => {
     const trigger = document.getElementById('chatbotTrigger');
     const container = document.getElementById('chatbotContainer');
     const closeBtn = document.getElementById('chatbotClose');
+    const form = document.getElementById('chatbotForm');
     const input = document.getElementById('chatbotInput');
-    const sendBtn = document.getElementById('chatbotSend');
     const messages = document.getElementById('chatbotMessages');
 
-    if (!trigger) return;
+    if (!trigger || !container || !form || !input || !messages) return;
 
-    // Toggle Chat
+    const menuUrl = container.dataset.menuUrl;
+    const messageUrl = container.dataset.messageUrl;
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+
     trigger.addEventListener('click', () => {
         container.classList.toggle('active');
-        if (container.classList.contains('active') && messages.children.length === 0) {
-            fetchInitialMenu();
+        if (container.classList.contains('active')) {
+            input.focus();
+            if (!messages.dataset.loaded) fetchInitialMenu();
         }
     });
 
-    closeBtn.addEventListener('click', () => {
-        container.classList.remove('active');
+    closeBtn?.addEventListener('click', () => container.classList.remove('active'));
+
+    form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        sendMessage(input.value);
     });
 
-    // Send Message
-    const sendMessage = async (text) => {
+    async function sendMessage(text) {
         if (!text.trim()) return;
 
         appendMessage(text, 'user');
         input.value = '';
-        
         showTyping();
 
         try {
-            const response = await fetch('/api/chatbot/message', {
+            const response = await fetch(messageUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    'Accept': 'application/json',
+                    ...(csrfToken ? { 'X-CSRF-TOKEN': csrfToken } : {}),
                 },
-                body: JSON.stringify({ message: text })
+                body: JSON.stringify({ message: text }),
             });
             const data = await response.json();
             hideTyping();
-            if (data.success) {
-                appendMessage(data.response, 'bot');
-            } else {
-                appendMessage('Maaf, ada kendala koneksi.', 'bot');
-            }
+            appendMessage(data.response || 'Tidak ada respons.', 'bot', data.options || []);
         } catch (error) {
             hideTyping();
-            appendMessage('Terjadi kesalahan sistem.', 'bot');
+            appendMessage('Terjadi kesalahan koneksi.', 'bot');
         }
-    };
+    }
 
-    sendBtn.addEventListener('click', () => sendMessage(input.value));
-    input.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') sendMessage(input.value);
-    });
-
-    // Initial Menu
     async function fetchInitialMenu() {
         showTyping();
         try {
-            const response = await fetch('/api/chatbot/menu');
+            const response = await fetch(menuUrl, { headers: { 'Accept': 'application/json' } });
             const data = await response.json();
             hideTyping();
             if (data.success) {
-                appendMessage(data.response, 'bot', data.options);
+                appendMessage(data.response, 'bot', data.options || []);
+                messages.dataset.loaded = 'true';
             }
         } catch (error) {
             hideTyping();
+            appendMessage('Gagal memuat menu.', 'bot');
         }
     }
 
     function appendMessage(text, side, options = []) {
-        const msgDiv = document.createElement('div');
-        msgDiv.className = `message message-${side}`;
-        
-        // Handle markdown-like bold/newlines from Gemini
-        let formattedText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                                .replace(/\n/g, '<br>');
-        
-        msgDiv.innerHTML = `<div>${formattedText}</div>`;
-        
-        if (options && options.length > 0) {
-            const quickReplies = document.createElement('div');
-            quickReplies.className = 'quick-replies';
-            options.forEach(opt => {
-                const btn = document.createElement('button');
-                btn.className = 'quick-reply-btn';
-                btn.textContent = opt;
-                btn.onclick = () => sendMessage(opt);
-                quickReplies.appendChild(btn);
+        const message = document.createElement('div');
+        message.className = `message message-${side}`;
+        message.innerHTML = `<div>${formatMessage(text)}</div>`;
+
+        if (options.length > 0) {
+            const replies = document.createElement('div');
+            replies.className = 'quick-replies';
+            options.forEach((option) => {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'quick-reply-btn';
+                button.textContent = option;
+                button.addEventListener('click', () => sendMessage(option));
+                replies.appendChild(button);
             });
-            msgDiv.appendChild(quickReplies);
+            message.appendChild(replies);
         }
 
-        messages.appendChild(msgDiv);
+        messages.appendChild(message);
         messages.scrollTop = messages.scrollHeight;
     }
 
+    function formatMessage(text) {
+        const escaped = String(text)
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;');
+
+        return escaped
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\n/g, '<br>');
+    }
+
     function showTyping() {
-        const typingDiv = document.createElement('div');
-        typingDiv.className = 'message message-bot typing-indicator';
-        typingDiv.id = 'typingIndicator';
-        typingDiv.innerHTML = '<div class="typing"><span></span><span></span><span></span></div>';
-        messages.appendChild(typingDiv);
+        const typing = document.createElement('div');
+        typing.className = 'message message-bot typing-indicator';
+        typing.id = 'typingIndicator';
+        typing.innerHTML = '<div class="typing"><span></span><span></span><span></span></div>';
+        messages.appendChild(typing);
         messages.scrollTop = messages.scrollHeight;
     }
 
     function hideTyping() {
-        const indicator = document.getElementById('typingIndicator');
-        if (indicator) indicator.remove();
+        document.getElementById('typingIndicator')?.remove();
     }
 });

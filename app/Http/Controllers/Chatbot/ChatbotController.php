@@ -12,6 +12,71 @@ use Illuminate\Support\Facades\Log;
 
 class ChatbotController extends Controller
 {
+    public function handlePublicMessage(Request $request): JsonResponse
+    {
+        try {
+            $userMessage = strtolower(trim($request->input('message', '')));
+
+            if ($userMessage === '') {
+                return response()->json([
+                    'success' => false,
+                    'response' => 'Mohon masukkan pesan Anda.'
+                ]);
+            }
+
+            if ($this->containsKeyword($userMessage, ['best seller', 'bestseller', 'terlaris'])) {
+                return $this->handlePublicPaketQuery(limit: 3, intro: 'Untuk Paket Best Seller, berikut pilihan yang bisa Anda cek:');
+            }
+
+            if ($this->containsKeyword($userMessage, ['termurah', 'murah', 'harga'])) {
+                return $this->handlePublicPaketQuery(sort: 'price_asc', limit: 3, intro: 'Berikut paket dengan harga paling terjangkau:');
+            }
+
+            if ($this->containsKeyword($userMessage, ['promo', 'lebaran'])) {
+                return response()->json([
+                    'success' => true,
+                    'response' => "Promo terbaru dapat berubah sewaktu-waktu. Silakan hubungi admin lewat WhatsApp untuk penawaran paling akurat.",
+                    'options' => ['Paket Best Seller', 'Paket Termurah', 'Tanya Admin']
+                ]);
+            }
+
+            if ($this->containsKeyword($userMessage, ['admin', 'kontak', 'whatsapp', 'wa', 'tanya'])) {
+                $company = CompanyProfile::first();
+                $phone = $company?->whatsapp ?: '081234567890';
+                return response()->json([
+                    'success' => true,
+                    'response' => "Anda bisa menghubungi admin Ghina Tour Travel melalui WhatsApp: **{$phone}**."
+                ]);
+            }
+
+            if ($this->containsKeyword($userMessage, ['paket', 'tour', 'wisata', 'perjalanan', 'trip'])) {
+                return $this->handlePublicPaketQuery(limit: 5);
+            }
+
+            if ($this->containsKeyword($userMessage, ['profil', 'profile', 'company', 'tentang', 'alamat', 'email'])) {
+                return $this->handleCompanyProfile();
+            }
+
+            return $this->getPublicMenu();
+        } catch (\Exception $e) {
+            Log::error('Public Chatbot Error: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'response' => 'Maaf, terjadi kesalahan pada sistem. Silakan coba lagi nanti.'
+            ]);
+        }
+    }
+
+    public function getPublicMenu(): JsonResponse
+    {
+        return response()->json([
+            'success' => true,
+            'response' => "Halo! Selamat datang di **Ghina Tour & Travel**. Ada yang bisa kami bantu hari ini?",
+            'options' => ['Paket Best Seller', 'Promo Lebaran', 'Paket Termurah', 'Tanya Admin']
+        ]);
+    }
+
     /**
      * Handle incoming chatbot messages (rule-based, no AI key required)
      */
@@ -133,6 +198,40 @@ class ChatbotController extends Controller
                 'response' => 'Terjadi kesalahan saat mengambil data paket tour.'
             ]);
         }
+    }
+
+    private function handlePublicPaketQuery(string $sort = 'latest', int $limit = 5, ?string $intro = null): JsonResponse
+    {
+        $query = Paket::query();
+
+        if ($sort === 'price_asc') {
+            $query->orderBy('harga_paket');
+        } else {
+            $query->latest();
+        }
+
+        $pakets = $query->take($limit)->get();
+
+        if ($pakets->isEmpty()) {
+            return response()->json([
+                'success' => true,
+                'response' => 'Maaf, belum ada paket tour yang tersedia saat ini.'
+            ]);
+        }
+
+        $result = ($intro ?: 'Berikut beberapa paket wisata Ghina Tour Travel:') . "\n\n";
+        foreach ($pakets as $paket) {
+            $result .= "**{$paket->nama_paket}**\n";
+            $result .= "Durasi: {$paket->durasi}\n";
+            $result .= "Harga: Rp " . number_format($paket->harga_paket, 0, ',', '.') . "/pax\n\n";
+        }
+        $result .= "Info lengkapnya bisa langsung cek halaman paket atau tanya admin.";
+
+        return response()->json([
+            'success' => true,
+            'response' => $result,
+            'options' => ['Paket Best Seller', 'Promo Lebaran', 'Paket Termurah', 'Tanya Admin']
+        ]);
     }
 
     /**
