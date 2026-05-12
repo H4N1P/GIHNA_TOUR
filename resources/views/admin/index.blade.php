@@ -262,7 +262,7 @@
                         <th>Nama Pemesan</th>
                         <th>No. HP</th>
                         <th>Paket</th>
-                        <th>Jumlah Pax</th>
+                        <th>Jumlah Orang</th>
                         <th>Tanggal Tour</th>
                         <th>Total Harga</th>
                         <th>Status</th>
@@ -276,9 +276,9 @@
                             <td style="font-weight:500;">{{ $p->nama_pemesan }}</td>
                             <td style="color:var(--text-muted);">{{ $p->no_hp }}</td>
                             <td>{{ $p->paket->nama_paket ?? '-' }}</td>
-                            <td>{{ $p->jumlah_orang }} pax</td>
+                            <td>{{ $p->jumlah_orang }} Orang</td>
                             <td>{{ \Carbon\Carbon::parse($p->tanggal_acara)->format('d M Y') }}</td>
-                            <td>
+                            {{-- <td>
                                 <div style="font-weight:600; color:var(--text);">
                                     Rp
                                     {{ number_format(($p->paket->harga_paket ?? 0) * ($p->jumlah_orang ?? 0), 0, ',', '.') }}
@@ -287,6 +287,16 @@
                                     <div style="font-size:12px;color:#16a34a;margin-top:2px;font-weight:500;">
                                         Total: Rp {{ number_format($p->total_harga, 0, ',', '.') }} (Disc
                                         {{ $p->diskon }}%)
+                                    </div>
+                                @endif
+                            </td> --}}
+                            <td class="px-4 py-3 text-sm">
+                                <div class="font-semibold text-admin-text">
+                                    Rp {{ number_format($p->total_harga, 0, ',', '.') }}
+                                </div>
+                                @if ($p->diskon > 0)
+                                    <div class="text-xs text-green-600 dark:text-green-400 font-medium mt-0.5">
+                                        Disc {{ $p->diskon }}%
                                     </div>
                                 @endif
                             </td>
@@ -351,9 +361,10 @@
                         justify-content:center;color:var(--text-muted);">
                         <svg style="width:40px;height:40px;margin-bottom:10px;opacity:.35;" fill="none"
                             stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0
-                                                   0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0
-                                                   0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0
+                                                                                   0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0
+                                                                                   0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                         </svg>
                         <p style="font-size:13px;margin:0;">Belum ada pendapatan di tahun {{ $tahun }}</p>
                     </div>

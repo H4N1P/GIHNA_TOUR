@@ -28,6 +28,6 @@ Thumbs.db
 graphify-out/
 # plan.md
 issue.md
-# /figma_designs
+figma_designs/
 download_figma.py
 parse_figma.py
