@@ -1,76 +1,81 @@
 # PT Ghina Tour Travel — Company Profile & Booking System
 
-Sistem Company Profile dan Pemesanan Paket Tour milik **PT Ghina Tour Travel** yang dibuat menggunakan framework **Laravel**. Proyek ini dirancang agar responsif, interaktif, dan mudah dikelola oleh admin.
+Aplikasi berbasis web **Company Profile dan Sistem Katalog/Pemesanan Paket Tour** milik **PT Ghina Tour Travel** yang dibangun menggunakan framework **Laravel**. 
+
+Sistem ini ditujukan untuk mempermudah calon pelanggan menjelajahi paket perjalanan wisata, melihat dokumentasi foto/video galeri tour, dan melakukan pemesanan via WhatsApp, serta menyediakan panel kontrol admin yang lengkap untuk pengelolaan paket, destinasi, fasilitas, pemesanan, dan aset galeri media secara dinamis.
 
 ---
 
-## 🚀 Fitur Unggulan Terbaru
+## 🛠️ Panduan Instalasi & Pengaturan Project
 
-1. **Overhaul Struktur Database (Migrasi Tempat ke Destinasi)**:
-   * Mengubah istilah dan tabel `tempats` secara total menjadi `destinasis` agar lebih presisi.
-   * Menambahkan kolom `image` pada tabel `fasilitas` untuk visualisasi ikon fasilitas (transportasi, akomodasi, konsumsi).
-   
-2. **Katalog Paket Tour Rill (`PaketSeeder.php`)**:
-   * Database kini diisi dengan **10 paket wisata rill** yang diambil langsung dari dokumen katalog `GHINA TOUR.pdf` (misalnya Jogja One Day, Dieng, Malang, Karimunjawa, Bali, dll.).
-   * Seeder dilengkapi fungsi **PHP GD Library** untuk melahirkan file gambar dummy secara dinamis ke direktori lokal tanpa mengotori Git.
+Gunakan panduan berikut untuk memasang project di komputer lokal Anda, baik untuk pemasangan pertama kali (**Clone**) maupun saat memperbarui pembaruan dari repository (**Pull**).
 
-3. **Manajemen Media & Galeri Pintar (Admin Panel)**:
-   * **Filter Tab Kategori**: Admin bisa memfilter seluruh media galeri berdasarkan tab **Semua**, **Destinasi**, **Fasilitas**, dan **Dokumentasi**.
-   * **Drag & Drop Upload + Tombol Batal Individual (X)**: Di halaman upload media, admin dapat menyeret file dan membatalkan/menghapus file tertentu secara individual melalui tombol X merah saat hover sebelum data dikirim ke server.
+### A. Persiapan Awal (Bagi yang baru pertama kali Clone)
 
-4. **Lightbox Multi-Halaman Global (Customer Frontend)**:
-   * Seluruh gambar/video di area publik customer (halaman Beranda, Galeri, gambar Destinasi di Detail Paket, serta gambar ikon kecil di Fasilitas) dapat diklik untuk diperbesar secara penuh menggunakan pop-up **Lightbox Global** yang interaktif.
-   * Mendukung video `.mp4`, auto-pause saat ditutup, penutupan via tombol ×, klik luar area, atau tombol **Escape**.
+1. **Clone Repository**:
+   ```bash
+   git clone https://github.com/H4N1P/Ghina-Tour-Travel.git
+   cd Ghina-Tour-Travel
+   ```
 
-5. **Isolasi Galeri Publik**:
-   * Galeri publik pelanggan disetel khusus hanya menampilkan dokumentasi perjalanan murni saja (yang relasinya `null` / tidak dihubungkan ke paket/destinasi/fasilitas) agar foto bawaan katalog tidak mengotori feed dokumentasi tour.
+2. **Install Dependensi PHP & Node.js**:
+   ```bash
+   composer install
+   npm install
+   ```
 
----
-
-## 🛠️ Panduan Instalasi / Panduan bagi Kolaborator Baru
-
-Jika Anda baru saja melakukan **`git pull`** dari repositori ini, ikuti langkah-langkah wajib berikut untuk menyelaraskan aset fisik dan database lokal Anda:
-
-### 1. Buat File Environment & Kunci Aplikasi
-Jika Anda belum memilikinya, salin file `.env` dari `.env.example`:
-```bash
-cp .env.example .env
-php artisan key:generate
-```
-*Jangan lupa atur konfigurasi `DB_DATABASE`, `DB_USERNAME`, dan `DB_PASSWORD` sesuai MySQL lokal Anda.*
-
-### 2. Hubungkan Storage Link (Wajib)
-Laravel menyimpan file publik di `storage/app/public`. Hubungkan jembatan symlink ke folder `public/storage` dengan menjalankan:
-```bash
-php artisan storage:link
-```
-*(Perintah ini akan melahirkan folder shortcut `public/storage` lokal).*
-
-### 3. Segarkan Database & Jalankan Seeder Dinamis (Wajib)
-Jalankan perintah ini untuk membangun tabel-tabel baru dan memicu fungsi PHP GD melahirkan file gambar bawaan secara dinamis ke folder storage lokal Anda:
-```bash
-php artisan migrate:fresh --seed
-```
-
-### 4. Jalankan Server Lokal
-Jalankan dev server Laravel dan NPM (jika menggunakan aset build Vite):
-```bash
-# Terminal 1 - Server PHP
-php artisan serve
-
-# Terminal 2 - Server Aset Vite
-npm run dev
-```
+3. **Salin File Environment & Generate App Key**:
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
+   *Buka file `.env` di text editor Anda, lalu sesuaikan konfigurasi database (`DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`) dengan database MySQL di PC Anda.*
 
 ---
 
-## 📂 Struktur Folder Aset Media Lokal (Penting)
-* File fisik unggahan disimpan secara lokal di: `storage/app/public/galleries/`
-* URL akses web publik dipetakan lewat: `public/storage/galleries/`
-* Folder `storage/app/public/` dimasukkan ke dalam `.gitignore` agar tidak membengkaki ukuran repository Git.
+### B. Sinkronisasi (Bagi yang baru saja melakukan Git Pull)
+
+Setiap kali Anda melakukan **`git pull`** untuk mengambil update kode terbaru, pastikan untuk selalu menjalankan perintah berikut agar database dan aset lokal Anda tersinkronisasi sempurna:
+
+1. **Hubungkan Symlink Folder Storage (Wajib sekali saja)**:
+   Perintah ini akan membuat tautan (shortcut) dari folder `storage/app/public` ke folder publik web `public/storage`:
+   ```bash
+   php artisan storage:link
+   ```
+
+2. **Segarkan Database & Jalankan Seeder Dinamis (Wajib)**:
+   Perintah ini akan memperbarui skema tabel database dan secara otomatis memicu fungsi PHP GD untuk melahirkan file gambar dummy secara lokal di laptop Anda agar halaman web tidak kosong:
+   ```bash
+   php artisan migrate:fresh --seed
+   ```
+
+---
+
+### C. Menjalankan Aplikasi
+
+Jalankan server lokal PHP dan builder aset Vite secara bersamaan:
+
+* **Terminal 1** (Untuk Server Backend Laravel):
+  ```bash
+  php artisan serve
+  ```
+
+* **Terminal 2** (Untuk Compiler Aset Frontend Vite):
+  ```bash
+  npm run dev
+  ```
+
+Buka browser Anda dan akses aplikasi di alamat: [http://localhost:8000](http://localhost:8000).
+
+---
+
+## 📂 Manajemen File & Aset Media
+* Seluruh file gambar/video fisik hasil unggahan manual melalui Admin Panel akan tersimpan secara lokal di folder `storage/app/public/galleries/`.
+* Folder media lokal tersebut sudah diabaikan di `.gitignore` agar tidak membengkaki ukuran Git. Kolaborator baru cukup menjalankan `php artisan db:seed` untuk menghasilkan file media dummy lokal secara otomatis saat testing.
 
 ---
 
 ## 📝 Lisensi
-Proyek ini dibuat untuk pemenuhan tugas mata kuliah dan dikembangkan secara internal oleh tim PT Ghina Tour Travel. Ditulis menggunakan basis framework Laravel open-source berlisensi [MIT license](https://opensource.org/licenses/MIT).
+Proyek ini dibuat untuk pemenuhan tugas kuliah dan dikembangkan secara internal oleh tim pengembang PT Ghina Tour Travel. Ditulis menggunakan basis framework Laravel open-source berlisensi [MIT license](https://opensource.org/licenses/MIT).
+
 
