@@ -1,58 +1,76 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# PT Ghina Tour Travel — Company Profile & Booking System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Sistem Company Profile dan Pemesanan Paket Tour milik **PT Ghina Tour Travel** yang dibuat menggunakan framework **Laravel**. Proyek ini dirancang agar responsif, interaktif, dan mudah dikelola oleh admin.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🚀 Fitur Unggulan Terbaru
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+1. **Overhaul Struktur Database (Migrasi Tempat ke Destinasi)**:
+   * Mengubah istilah dan tabel `tempats` secara total menjadi `destinasis` agar lebih presisi.
+   * Menambahkan kolom `image` pada tabel `fasilitas` untuk visualisasi ikon fasilitas (transportasi, akomodasi, konsumsi).
+   
+2. **Katalog Paket Tour Rill (`PaketSeeder.php`)**:
+   * Database kini diisi dengan **10 paket wisata rill** yang diambil langsung dari dokumen katalog `GHINA TOUR.pdf` (misalnya Jogja One Day, Dieng, Malang, Karimunjawa, Bali, dll.).
+   * Seeder dilengkapi fungsi **PHP GD Library** untuk melahirkan file gambar dummy secara dinamis ke direktori lokal tanpa mengotori Git.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+3. **Manajemen Media & Galeri Pintar (Admin Panel)**:
+   * **Filter Tab Kategori**: Admin bisa memfilter seluruh media galeri berdasarkan tab **Semua**, **Destinasi**, **Fasilitas**, dan **Dokumentasi**.
+   * **Drag & Drop Upload + Tombol Batal Individual (X)**: Di halaman upload media, admin dapat menyeret file dan membatalkan/menghapus file tertentu secara individual melalui tombol X merah saat hover sebelum data dikirim ke server.
 
-## Learning Laravel
+4. **Lightbox Multi-Halaman Global (Customer Frontend)**:
+   * Seluruh gambar/video di area publik customer (halaman Beranda, Galeri, gambar Destinasi di Detail Paket, serta gambar ikon kecil di Fasilitas) dapat diklik untuk diperbesar secara penuh menggunakan pop-up **Lightbox Global** yang interaktif.
+   * Mendukung video `.mp4`, auto-pause saat ditutup, penutupan via tombol ×, klik luar area, atau tombol **Escape**.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+5. **Isolasi Galeri Publik**:
+   * Galeri publik pelanggan disetel khusus hanya menampilkan dokumentasi perjalanan murni saja (yang relasinya `null` / tidak dihubungkan ke paket/destinasi/fasilitas) agar foto bawaan katalog tidak mengotori feed dokumentasi tour.
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+## 🛠️ Panduan Instalasi / Panduan bagi Kolaborator Baru
 
-## Agentic Development
+Jika Anda baru saja melakukan **`git pull`** dari repositori ini, ikuti langkah-langkah wajib berikut untuk menyelaraskan aset fisik dan database lokal Anda:
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
+### 1. Buat File Environment & Kunci Aplikasi
+Jika Anda belum memilikinya, salin file `.env` dari `.env.example`:
 ```bash
-composer require laravel/boost --dev
+cp .env.example .env
+php artisan key:generate
+```
+*Jangan lupa atur konfigurasi `DB_DATABASE`, `DB_USERNAME`, dan `DB_PASSWORD` sesuai MySQL lokal Anda.*
 
-php artisan boost:install
+### 2. Hubungkan Storage Link (Wajib)
+Laravel menyimpan file publik di `storage/app/public`. Hubungkan jembatan symlink ke folder `public/storage` dengan menjalankan:
+```bash
+php artisan storage:link
+```
+*(Perintah ini akan melahirkan folder shortcut `public/storage` lokal).*
+
+### 3. Segarkan Database & Jalankan Seeder Dinamis (Wajib)
+Jalankan perintah ini untuk membangun tabel-tabel baru dan memicu fungsi PHP GD melahirkan file gambar bawaan secara dinamis ke folder storage lokal Anda:
+```bash
+php artisan migrate:fresh --seed
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+### 4. Jalankan Server Lokal
+Jalankan dev server Laravel dan NPM (jika menggunakan aset build Vite):
+```bash
+# Terminal 1 - Server PHP
+php artisan serve
 
-## Contributing
+# Terminal 2 - Server Aset Vite
+npm run dev
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+## 📂 Struktur Folder Aset Media Lokal (Penting)
+* File fisik unggahan disimpan secara lokal di: `storage/app/public/galleries/`
+* URL akses web publik dipetakan lewat: `public/storage/galleries/`
+* Folder `storage/app/public/` dimasukkan ke dalam `.gitignore` agar tidak membengkaki ukuran repository Git.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+---
 
-## Security Vulnerabilities
+## 📝 Lisensi
+Proyek ini dibuat untuk pemenuhan tugas mata kuliah dan dikembangkan secara internal oleh tim PT Ghina Tour Travel. Ditulis menggunakan basis framework Laravel open-source berlisensi [MIT license](https://opensource.org/licenses/MIT).
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
