@@ -3,7 +3,7 @@
 @section('header', 'Tambah Paket Tour')
 
 @section('content')
-    <form action="{{ route('admin.paket.store') }}" method="POST" class="max-w-4xl space-y-6">
+    <form action="{{ route('admin.paket.store') }}" method="POST" enctype="multipart/form-data" class="max-w-4xl space-y-6">
         @csrf
 
         {{-- ── Informasi Paket ── --}}
@@ -22,6 +22,17 @@
                         class="w-full px-4 py-2.5 rounded-lg border border-admin-border bg-admin-card text-admin-text focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors"
                         placeholder="Contoh: Paket Umroh Premium">
                     @error('nama_paket')
+                        <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <label for="image" class="block text-sm font-medium text-admin-text mb-2">
+                        Gambar / Cover Paket <span class="text-admin-muted text-xs font-normal">(Opsional)</span>
+                    </label>
+                    <input type="file" id="image" name="image" accept="image/*"
+                        class="w-full px-4 py-2.5 rounded-lg border border-admin-border bg-admin-card text-admin-text focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors">
+                    @error('image')
                         <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                     @enderror
                 </div>
@@ -69,25 +80,25 @@
             </div>
         </div>
 
-        {{-- ── Tempat Wisata ── --}}
+        {{-- ── Destinasi Wisata ── --}}
         <div class="bg-admin-card rounded-xl border border-admin-border">
             <div class="p-4 lg:p-6 border-b border-admin-border flex items-center justify-between">
                 <div>
-                    <h3 class="text-lg font-semibold text-blue-600 dark:text-blue-400">Tempat Wisata</h3>
+                    <h3 class="text-lg font-semibold text-blue-600 dark:text-blue-400">Destinasi Wisata</h3>
                     <p class="text-sm text-admin-muted mt-0.5">Daftar destinasi yang akan dikunjungi
                     </p>
                 </div>
-                <button type="button" onclick="addTempatField()"
+                <button type="button" onclick="addDestinasiField()"
                     class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors border border-blue-200 dark:border-blue-800">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
-                    Tambah Tempat
+                    Tambah Destinasi
                 </button>
             </div>
             <div class="p-4 lg:p-6">
-                <div id="tempats-container" class="space-y-3">
-                    <p id="tempats-empty" class="text-sm text-admin-muted italic">Belum ada tempat. Klik "+ Tambah Tempat"
+                <div id="destinasis-container" class="space-y-3">
+                    <p id="destinasis-empty" class="text-sm text-admin-muted italic">Belum ada destinasi. Klik "+ Tambah Destinasi"
                         untuk menambahkan.</p>
                 </div>
             </div>
@@ -155,9 +166,9 @@
 
 @push('scripts')
     <script>
-        function addTempatField(value = '') {
-            const container = document.getElementById('tempats-container');
-            const empty = document.getElementById('tempats-empty');
+        function addDestinasiField(value = '') {
+            const container = document.getElementById('destinasis-container');
+            const empty = document.getElementById('destinasis-empty');
             if (empty) empty.remove();
 
             const index = container.querySelectorAll('.field-row').length;
@@ -165,17 +176,19 @@
             div.className = 'field-row flex gap-3 items-center';
             div.innerHTML = `
         <span class="w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-bold flex items-center justify-center flex-shrink-0">${index + 1}</span>
-        <input type="text" name="tempats[${index}][nama_tempat]" value="${value}"
+        <input type="text" name="destinasis[${index}][nama_destinasi]" value="${value}"
             class="flex-1 px-4 py-2.5 rounded-lg border border-admin-border bg-admin-card text-admin-text focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors"
             placeholder="Nama destinasi (contoh: Mekkah, Madinah)">
-        <button type="button" onclick="removeRow(this, 'tempats-container', 'tempats-empty', 'Belum ada tempat. Klik &quot;+ Tambah Tempat&quot; untuk menambahkan.')"
+        <input type="file" name="destinasis[${index}][image]" accept="image/*" title="Upload Gambar Destinasi"
+            class="w-48 px-3 py-2 rounded-lg border border-admin-border bg-admin-card text-admin-text focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors text-sm">
+        <button type="button" onclick="removeRow(this, 'destinasis-container', 'destinasis-empty', 'Belum ada destinasi. Klik &quot;+ Tambah Destinasi&quot; untuk menambahkan.')"
             class="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors flex-shrink-0">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
             </svg>
         </button>`;
             container.appendChild(div);
-            renumberRows('tempats-container');
+            renumberRows('destinasis-container');
         }
 
         function addFasilitasField(nama = '', tipe = 'konsumsi') {
@@ -190,8 +203,10 @@
         <input type="text" name="fasilitas[${index}][nama_fasilitas]" value="${nama}"
             class="flex-1 px-4 py-2.5 rounded-lg border border-admin-border bg-admin-card text-admin-text focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors"
             placeholder="Nama fasilitas (contoh: Hotel Bintang 5)">
+        <input type="file" name="fasilitas[${index}][image]" accept="image/*" title="Upload Gambar Fasilitas"
+            class="w-48 px-3 py-2 rounded-lg border border-admin-border bg-admin-card text-admin-text focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors text-sm">
         <select name="fasilitas[${index}][tipe_fasilitas]"
-            class="w-44 px-3 py-2.5 rounded-lg border border-admin-border bg-admin-card text-admin-text focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors text-sm">
+            class="w-36 px-3 py-2.5 rounded-lg border border-admin-border bg-admin-card text-admin-text focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors text-sm">
             <option value="konsumsi" ${tipe === 'konsumsi' ? 'selected' : ''}>🍽 Konsumsi</option>
             <option value="akomodasi" ${tipe === 'akomodasi' ? 'selected' : ''}>🏨 Akomodasi</option>
             <option value="transportasi" ${tipe === 'transportasi' ? 'selected' : ''}>🚌 Transportasi</option>

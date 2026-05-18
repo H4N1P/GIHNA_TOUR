@@ -31,15 +31,15 @@
                         <td class="py-3 font-medium">{{ $gallery->created_at ? $gallery->created_at->format('d F Y, H:i') : '-' }}
                         </td>
                     </tr>
-                    @if ($gallery->tempat)
+                    @if ($gallery->destinasi)
                         <tr class="border-b border-admin-border">
-                            <td class="py-3 pr-4 text-admin-muted">Tempat Wisata</td>
-                            <td class="py-3 font-medium">{{ $gallery->tempat->nama_tempat }}</td>
+                            <td class="py-3 pr-4 text-admin-muted">Destinasi Wisata</td>
+                            <td class="py-3 font-medium">{{ $gallery->destinasi->nama_destinasi }}</td>
                         </tr>
-                        @if ($gallery->tempat->paket)
+                        @if ($gallery->destinasi->paket)
                             <tr class="border-b border-admin-border">
                                 <td class="py-3 pr-4 text-admin-muted">Paket</td>
-                                <td class="py-3">{{ $gallery->tempat->paket->nama_paket }}</td>
+                                <td class="py-3">{{ $gallery->destinasi->paket->nama_paket }}</td>
                             </tr>
                         @endif
                     @endif

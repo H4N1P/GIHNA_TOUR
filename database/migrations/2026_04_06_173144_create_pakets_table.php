@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->string('nama_paket');
+            $table->string('image')->nullable();
             $table->decimal('harga_paket', 15, 2);
             $table->string('durasi')->nullable();
             $table->text('note')->nullable();

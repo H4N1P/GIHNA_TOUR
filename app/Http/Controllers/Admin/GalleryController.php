@@ -5,19 +5,38 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Gallery;
 use App\Models\Paket;
+use App\Traits\ImageCompressor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class GalleryController extends Controller
 {
+    use ImageCompressor;
+
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        // FIX: get() tidak menerima argumen — gunakan latest()->get() untuk semua data
-        $galleries = Gallery::with(['tempat.paket', 'fasilitas.paket'])->latest()->get();
-        return view('admin.gallery.index', compact('galleries'));
+        $filter = $request->query('filter', 'semua');
+
+        $query = Gallery::with(['destinasi.paket', 'fasilitas.paket'])->latest();
+
+        switch ($filter) {
+            case 'destinasi':
+                $query->whereNotNull('id_destinasi');
+                break;
+            case 'fasilitas':
+                $query->whereNotNull('id_fasilitas');
+                break;
+            case 'dokumentasi':
+                $query->whereNull('id_destinasi')->whereNull('id_fasilitas');
+                break;
+            // 'semua' — no filter
+        }
+
+        $galleries = $query->get();
+        return view('admin.gallery.index', compact('galleries', 'filter'));
     }
 
     /**
@@ -25,30 +44,30 @@ class GalleryController extends Controller
      */
     public function create()
     {
-        // FIX: relasi di model Paket bernama 'tempats' bukan 'tempat'
-        $pakets = Paket::with(['tempats', 'fasilitas'])->latest()->get();
+        // FIX: relasi di model Paket bernama 'destinasis' bukan 'tempat'
+        $pakets = Paket::with(['destinasis', 'fasilitas'])->latest()->get();
         return view('admin.gallery.create', compact('pakets'));
     }
 
     public function show(Gallery $gallery)
     {
-        $gallery->load(['tempat', 'fasilitas']);
+        $gallery->load(['destinasi', 'fasilitas']);
         return view('admin.gallery.show', compact('gallery'));
     }
 
     /**
-     * AJAX: Get tempat & fasilitas for a given paket.
+     * AJAX: Get destinasi & fasilitas for a given paket.
      */
     public function getRelationsByPaket(Request $request)
     {
-        $paket = Paket::with(['tempats', 'fasilitas'])->find($request->paket_id);
+        $paket = Paket::with(['destinasis', 'fasilitas'])->find($request->paket_id);
 
         if (!$paket) {
-            return response()->json(['tempats' => [], 'fasilitas' => []]);
+            return response()->json(['destinasis' => [], 'fasilitas' => []]);
         }
 
         return response()->json([
-            'tempats' => $paket->tempats->map(fn($t) => ['id' => $t->id, 'nama' => $t->nama_tempat]),
+            'destinasis' => $paket->destinasis->map(fn($t) => ['id' => $t->id, 'nama' => $t->nama_destinasi]),
             'fasilitas' => $paket->fasilitas->map(fn($f) => ['id' => $f->id, 'nama' => $f->nama_fasilitas]),
         ]);
     }
@@ -63,7 +82,7 @@ class GalleryController extends Controller
             'media'        => 'required|array',
             'media.*'      => 'file|mimes:jpeg,png,jpg,gif,svg,webp,mp4,mov,avi|max:51200', // 50MB max
             'id_fasilitas' => 'nullable|exists:fasilitas,id',
-            'id_tempat'    => 'nullable|exists:tempats,id',
+            'id_destinasi' => 'nullable|exists:destinasis,id',
         ]);
 
         foreach ($request->file('media') as $file) {
@@ -72,7 +91,7 @@ class GalleryController extends Controller
 
             // Compress images using GD (no external library needed)
             if ($type === 'image') {
-                $path = $this->compressAndStoreImage($file);
+                $path = $this->compressAndStoreImage($file, 'galleries');
             } else {
                 // Store video directly (no FFMpeg)
                 $path = $file->store('galleries', 'public');
@@ -82,64 +101,11 @@ class GalleryController extends Controller
                 'path'         => $path,
                 'type'         => $type,
                 'id_fasilitas' => $request->id_fasilitas,
-                'id_tempat'    => $request->id_tempat,
+                'id_destinasi' => $request->id_destinasi,
             ]);
         }
 
         return redirect()->route('admin.gallery.index')->with('success', 'Media berhasil ditambahkan');
-    }
-
-    /**
-     * Compress image using GD and store it.
-     */
-    private function compressAndStoreImage($file): string
-    {
-        $extension = strtolower($file->getClientOriginalExtension());
-        $filename = 'galleries/' . uniqid() . '_' . time() . '.jpg';
-
-        // Create image resource from uploaded file
-        $image = match ($extension) {
-            'png' => imagecreatefrompng($file->getRealPath()),
-            'gif' => imagecreatefromgif($file->getRealPath()),
-            'webp' => imagecreatefromwebp($file->getRealPath()),
-            default => imagecreatefromjpeg($file->getRealPath()),
-        };
-
-        if (!$image) {
-            // Fallback: store without compression
-            return $file->store('galleries', 'public');
-        }
-
-        // Resize if too large (max 1920px width)
-        $width = imagesx($image);
-        $height = imagesy($image);
-        $maxWidth = 1920;
-
-        if ($width > $maxWidth) {
-            $newHeight = (int) ($height * ($maxWidth / $width));
-            $resized = imagecreatetruecolor($maxWidth, $newHeight);
-
-            // Preserve transparency for PNG
-            if ($extension === 'png') {
-                imagealphablending($resized, false);
-                imagesavealpha($resized, true);
-            }
-
-            imagecopyresampled($resized, $image, 0, 0, 0, 0, $maxWidth, $newHeight, $width, $height);
-            imagedestroy($image);
-            $image = $resized;
-        }
-
-        // Save as JPEG with 75% quality
-        $storagePath = storage_path('app/public/' . $filename);
-        $dir = dirname($storagePath);
-        if (!is_dir($dir)) {
-            mkdir($dir, 0755, true);
-        }
-        imagejpeg($image, $storagePath, 75);
-        imagedestroy($image);
-
-        return $filename;
     }
 
 

@@ -1,14 +1,6 @@
 @php
-    $cover = null;
-    if ($paket->relationLoaded('fotos') && $paket->fotos->isNotEmpty()) {
-        $cover = $paket->fotos->first();
-    } elseif ($paket->relationLoaded('tempats')) {
-        $cover = $paket->tempats->flatMap(fn($tempat) => $tempat->galleries ?? collect())->first();
-    }
-    $coverSrc = $cover?->path
-        ? (Str::startsWith($cover->path, 'http')
-            ? $cover->path
-            : asset('storage/' . $cover->path))
+    $coverSrc = $paket->image 
+        ? (Str::startsWith($paket->image, 'http') ? $paket->image : asset('storage/' . $paket->image))
         : null;
 @endphp
 

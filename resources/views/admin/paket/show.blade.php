@@ -38,11 +38,15 @@
                 <div class="flex items-start gap-4">
                     <div
                         class="w-14 h-14 rounded-xl bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-900/30 dark:to-orange-900/30 flex items-center justify-center flex-shrink-0">
-                        <svg class="w-7 h-7 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor"
-                            viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                        </svg>
+                        @if($paket->image)
+                            <img src="{{ asset('storage/' . $paket->image) }}" class="w-full h-full object-cover rounded-xl" alt="Cover">
+                        @else
+                            <svg class="w-7 h-7 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                            </svg>
+                        @endif
                     </div>
                     <div class="flex-1 min-w-0">
                         <h4 class="text-xl font-bold text-admin-text">{{ $paket->nama_paket }}</h4>
@@ -66,7 +70,7 @@
                     <div class="bg-admin-bg rounded-xl p-4 col-span-2 sm:col-span-1">
                         <p class="text-xs text-admin-muted font-semibold uppercase tracking-wider">Total Komponen</p>
                         <p class="text-base font-bold text-admin-text mt-1">
-                            {{ $paket->tempats->count() }} Tempat · {{ $paket->fasilitas->count() }} Fasilitas
+                            {{ $paket->destinasis->count() }} Destinasi · {{ $paket->fasilitas->count() }} Fasilitas
                         </p>
                     </div>
                 </div>
@@ -122,8 +126,8 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
 
-                    {{-- Tempat --}}
-                    @if ($paket->tempats->count() > 0)
+                    {{-- Destinasi --}}
+                    @if ($paket->destinasis->count() > 0)
                         <div class="bg-amber-50 dark:bg-amber-900/20 rounded-xl p-4">
                             <div class="flex items-center gap-2 mb-3">
                                 <svg class="w-4 h-4 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor"
@@ -131,14 +135,18 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0zM15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                 </svg>
-                                <p class="text-xs font-bold text-amber-700 dark:text-amber-400 uppercase">Tempat
-                                    ({{ $paket->tempats->count() }})</p>
+                                <p class="text-xs font-bold text-amber-700 dark:text-amber-400 uppercase">Destinasi
+                                    ({{ $paket->destinasis->count() }})</p>
                             </div>
-                            <ul class="space-y-1">
-                                @foreach ($paket->tempats as $t)
-                                    <li class="text-sm text-amber-800 dark:text-amber-300 flex items-start gap-1.5">
-                                        <span class="mt-1 w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0"></span>
-                                        {{ $t->nama_tempat }}
+                            <ul class="space-y-2">
+                                @foreach ($paket->destinasis as $t)
+                                    <li class="text-sm text-amber-800 dark:text-amber-300 flex items-center gap-2">
+                                        @if($t->image)
+                                            <img src="{{ asset('storage/' . $t->image) }}" class="w-6 h-6 rounded object-cover">
+                                        @else
+                                            <span class="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0"></span>
+                                        @endif
+                                        {{ $t->nama_destinasi }}
                                     </li>
                                 @endforeach
                             </ul>
@@ -155,8 +163,12 @@
                             </div>
                             <ul class="space-y-1">
                                 @foreach ($items as $f)
-                                    <li class="text-sm {{ $cfg['text'] }} flex items-start gap-1.5">
-                                        <span class="mt-1">✓</span>
+                                    <li class="text-sm {{ $cfg['text'] }} flex items-center gap-2">
+                                        @if($f->image)
+                                            <img src="{{ asset('storage/' . $f->image) }}" class="w-6 h-6 rounded object-cover">
+                                        @else
+                                            <span class="mt-1">✓</span>
+                                        @endif
                                         {{ $f->nama_fasilitas }}
                                     </li>
                                 @endforeach
@@ -165,7 +177,7 @@
                     @empty
                     @endforelse
 
-                    @if ($paket->tempats->count() === 0 && $paket->fasilitas->count() === 0)
+                    @if ($paket->destinasis->count() === 0 && $paket->fasilitas->count() === 0)
                         <div class="col-span-full bg-admin-bg rounded-xl p-6 text-center">
                             <p class="text-admin-muted text-sm">Belum ada komponen yang ditambahkan</p>
                         </div>

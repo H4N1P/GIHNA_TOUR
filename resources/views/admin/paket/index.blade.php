@@ -261,18 +261,11 @@
                             <td>
                                 <div style="display:flex;align-items:center;gap:12px;">
                                     {{--
-                                        Thumbnail: ambil dari galleries milik tempat pertama paket ini.
-                                        tempats = hasMany → ambil ->first() dulu, lalu cek galleries-nya.
-                                        Perlu eager load: Paket::with(['fasilitas', 'tempats.galleries'])
+                                        Thumbnail: ambil dari cover image Paket (jika ada).
                                     --}}
-                                    @php
-                                        $firstTempat = $paket->tempats->first();
-                                        $firstGallery = $firstTempat?->galleries?->first();
-                                    @endphp
-
-                                    @if ($firstGallery)
+                                    @if ($paket->image)
                                         <div class="dest-thumb">
-                                            <img src="{{ asset('storage/' . $firstGallery->path) }}"
+                                            <img src="{{ asset('storage/' . $paket->image) }}"
                                                 alt="{{ $paket->nama_paket }}" />
                                         </div>
                                     @else
@@ -330,10 +323,10 @@
                                         ];
                                     @endphp
 
-                                    {{-- Badge tempat dari relasi tempats --}}
-                                    @if ($paket->tempats->count() > 0)
+                                    {{-- Badge tempat dari relasi destinasis --}}
+                                    @if ($paket->destinasis->count() > 0)
                                         <span class="komp-badge" style="background:#EFF6FF;color:#2563eb;">
-                                            {{ $paket->tempats->count() }} Tempat
+                                            {{ $paket->destinasis->count() }} Destinasi
                                         </span>
                                     @endif
 
@@ -352,7 +345,7 @@
                                     @empty
                                     @endforelse
 
-                                    @if ($paket->tempats->count() === 0 && $paket->fasilitas->count() === 0)
+                                    @if ($paket->destinasis->count() === 0 && $paket->fasilitas->count() === 0)
                                         <span style="font-size:12px;color:var(--text-muted);">—</span>
                                     @endif
                                 </div>

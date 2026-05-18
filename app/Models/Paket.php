@@ -11,17 +11,18 @@ class Paket extends Model
         'harga_paket',
         'durasi',
         'note',
+        'image',
     ];
 
 
-    public function tempats()
+    public function destinasis()
     {
-        return $this->hasMany(Tempat::class, 'id_paket');
+        return $this->hasMany(Destinasi::class, 'id_paket');
     }
 
     public function fotos()
     {
-        return $this->hasManyThrough(Gallery::class, Tempat::class, 'id_paket', 'id_tempat');
+        return $this->hasManyThrough(Gallery::class, Destinasi::class, 'id_paket', 'id_destinasi');
     }
 
     public function fasilitas()

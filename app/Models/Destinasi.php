@@ -4,11 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Tempat extends Model
+class Destinasi extends Model
 {
     protected $fillable = [
         'id_paket',
-        'nama_tempat'
+        'nama_destinasi',
+        'image'
     ];
 
     public function paket()
@@ -18,6 +19,6 @@ class Tempat extends Model
 
     public function galleries()
     {
-        return $this->hasMany(Gallery::class, 'id_tempat');
+        return $this->hasMany(Gallery::class, 'id_destinasi');
     }
 }

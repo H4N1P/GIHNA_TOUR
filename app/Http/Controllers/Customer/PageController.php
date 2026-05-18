@@ -18,12 +18,14 @@ class PageController extends Controller
     public function index()
     {
         try {
-            $pakets = Paket::with(['fasilitas', 'tempats.galleries', 'fotos'])
+            $pakets = Paket::with(['fasilitas', 'destinasis.galleries', 'fotos'])
                 ->orderBy('created_at', 'desc')
                 ->take(6)
                 ->get();
 
-            $fotos = Gallery::orderBy('created_at', 'desc')
+            $fotos = Gallery::whereNull('id_destinasi')
+                ->whereNull('id_fasilitas')
+                ->orderBy('created_at', 'desc')
                 ->take(6)
                 ->get();
         } catch (QueryException) {
@@ -42,7 +44,7 @@ class PageController extends Controller
         $query = trim((string) $request->input('q', ''));
 
         try {
-            $pakets = Paket::with(['fasilitas', 'tempats.galleries', 'fotos'])
+            $pakets = Paket::with(['fasilitas', 'destinasis.galleries', 'fotos'])
                 ->when($query !== '', function ($builder) use ($query) {
                     $builder->where('nama_paket', 'like', "%{$query}%");
                 })
@@ -62,7 +64,7 @@ class PageController extends Controller
      */
     public function packageDetail($id)
     {
-        $paket = Paket::with(['rundowns', 'fasilitas', 'tempats.galleries', 'fotos'])
+        $paket = Paket::with(['rundowns', 'fasilitas', 'destinasis.galleries', 'fotos'])
             ->findOrFail($id);
 
         return view('customer.package-detail', compact('paket'));
@@ -74,7 +76,9 @@ class PageController extends Controller
     public function photos()
     {
         try {
-            $fotos = Gallery::orderBy('created_at', 'desc')
+            $fotos = Gallery::whereNull('id_destinasi')
+                ->whereNull('id_fasilitas')
+                ->orderBy('created_at', 'desc')
                 ->paginate(12);
         } catch (QueryException) {
             $fotos = new LengthAwarePaginator([], 0, 12);

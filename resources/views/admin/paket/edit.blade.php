@@ -3,7 +3,7 @@
 @section('header', 'Edit Paket Tour')
 
 @section('content')
-<form action="{{ route('admin.paket.update', $paket->id) }}" method="POST" class="max-w-4xl space-y-6">
+<form action="{{ route('admin.paket.update', $paket->id) }}" method="POST" enctype="multipart/form-data" class="max-w-4xl space-y-6">
     @csrf
     @method('PUT')
 
@@ -31,6 +31,20 @@
                     value="{{ old('nama_paket', $paket->nama_paket) }}" required
                     class="w-full px-4 py-2.5 rounded-lg border border-admin-border bg-admin-card text-admin-text focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors">
                 @error('nama_paket')<p class="mt-1 text-sm text-red-500">{{ $message }}</p>@enderror
+            </div>
+
+            <div>
+                <label for="image" class="block text-sm font-medium text-admin-text mb-2">
+                    Gambar / Cover Paket <span class="text-admin-muted text-xs font-normal">(Biarkan kosong jika tidak ingin mengubah)</span>
+                </label>
+                <input type="file" id="image" name="image" accept="image/*"
+                    class="w-full px-4 py-2.5 rounded-lg border border-admin-border bg-admin-card text-admin-text focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors">
+                @error('image')<p class="mt-1 text-sm text-red-500">{{ $message }}</p>@enderror
+                @if($paket->image)
+                    <div class="mt-2">
+                        <img src="{{ asset('storage/' . $paket->image) }}" class="w-32 h-auto rounded-lg shadow-sm" alt="Cover Paket">
+                    </div>
+                @endif
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -89,23 +103,23 @@
         </div>
     </div>
 
-    {{-- ── Tempat Wisata ── --}}
+    {{-- ── Destinasi Wisata ── --}}
     <div class="bg-admin-card rounded-xl border border-admin-border">
         <div class="p-4 lg:p-6 border-b border-admin-border flex items-center justify-between">
             <div>
-                <h3 class="text-lg font-semibold text-blue-600 dark:text-blue-400">Tempat Wisata</h3>
+                <h3 class="text-lg font-semibold text-blue-600 dark:text-blue-400">Destinasi Wisata</h3>
                 <p class="text-sm text-admin-muted mt-0.5">Daftar destinasi yang akan dikunjungi</p>
             </div>
-            <button type="button" onclick="addTempatField()"
+            <button type="button" onclick="addDestinasiField()"
                 class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors border border-blue-200 dark:border-blue-800">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                 </svg>
-                Tambah Tempat
+                Tambah Destinasi
             </button>
         </div>
         <div class="p-4 lg:p-6">
-            <div id="tempats-container" class="space-y-3">
+            <div id="destinasis-container" class="space-y-3">
                 {{-- Populated via JS from existing data --}}
             </div>
         </div>
@@ -152,11 +166,11 @@
 // ── Existing data from server ──────────────────────────────────
 @php
     $rundownsJson = $paket->rundowns->map(fn($r) => ['id' => $r->id, 'waktu' => $r->waktu, 'acara' => $r->acara, 'deskripsi' => $r->deskripsi]);
-    $tempatsJson = $paket->tempats->map(fn($t) => ['id' => $t->id, 'nama_tempat' => $t->nama_tempat]);
-    $fasilitasJson = $paket->fasilitas->map(fn($f) => ['id' => $f->id, 'nama_fasilitas' => $f->nama_fasilitas, 'tipe_fasilitas' => $f->tipe_fasilitas]);
+    $destinasisJson = $paket->destinasis->map(fn($t) => ['id' => $t->id, 'nama_destinasi' => $t->nama_destinasi, 'image' => $t->image]);
+    $fasilitasJson = $paket->fasilitas->map(fn($f) => ['id' => $f->id, 'nama_fasilitas' => $f->nama_fasilitas, 'tipe_fasilitas' => $f->tipe_fasilitas, 'image' => $f->image]);
 @endphp
 const existingRundowns = @json($rundownsJson);
-const existingTempats = @json($tempatsJson);
+const existingDestinasis = @json($destinasisJson);
 const existingFasilitas = @json($fasilitasJson);
 
 // ── Rundown helpers ─────────────────────────────────────────────
@@ -208,41 +222,59 @@ function removeRundownRow(btn) {
     }
 }
 
-// ── Tempat helpers ─────────────────────────────────────────────
-function addTempatField(id = '', value = '') {
-    const container = document.getElementById('tempats-container');
+// ── Destinasi helpers ─────────────────────────────────────────────
+function addDestinasiField(id = '', value = '', imagePath = '') {
+    const container = document.getElementById('destinasis-container');
     const index = container.querySelectorAll('.field-row').length;
     const div = document.createElement('div');
     div.className = 'field-row flex gap-3 items-center';
+
+    let imgHtml = '';
+    if (imagePath) {
+        imgHtml = `<img src="/storage/${imagePath}" class="w-10 h-10 object-cover rounded" alt="Gambar">`;
+    }
+
     div.innerHTML = `
         <span class="w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-bold flex items-center justify-center flex-shrink-0">${index + 1}</span>
-        ${id ? `<input type="hidden" name="tempats[${index}][id]" value="${id}">` : ''}
-        <input type="text" name="tempats[${index}][nama_tempat]" value="${escHtml(value)}"
+        ${id ? `<input type="hidden" name="destinasis[${index}][id]" value="${id}">` : ''}
+        <input type="text" name="destinasis[${index}][nama_destinasi]" value="${escHtml(value)}"
             class="flex-1 px-4 py-2.5 rounded-lg border border-admin-border bg-admin-card text-admin-text focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors"
             placeholder="Nama destinasi (contoh: Mekkah, Madinah)">
-        <button type="button" onclick="removeRow(this,'tempats-container')"
+        ${imgHtml}
+        <input type="file" name="destinasis[${index}][image]" accept="image/*" title="Ganti Gambar"
+            class="w-48 px-3 py-2 rounded-lg border border-admin-border bg-admin-card text-admin-text focus:ring-2 focus:ring-amber-500 transition-colors text-sm">
+        <button type="button" onclick="removeRow(this,'destinasis-container')"
             class="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors flex-shrink-0">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
             </svg>
         </button>`;
     container.appendChild(div);
-    renumberRows('tempats-container');
+    renumberRows('destinasis-container');
 }
 
 // ── Fasilitas helpers ──────────────────────────────────────────
-function addFasilitasField(id = '', nama = '', tipe = 'konsumsi') {
+function addFasilitasField(id = '', nama = '', tipe = 'konsumsi', imagePath = '') {
     const container = document.getElementById('fasilitas-container');
     const index = container.querySelectorAll('.field-row').length;
     const div = document.createElement('div');
     div.className = 'field-row flex gap-3 items-center';
+
+    let imgHtml = '';
+    if (imagePath) {
+        imgHtml = `<img src="/storage/${imagePath}" class="w-10 h-10 object-cover rounded" alt="Gambar">`;
+    }
+
     div.innerHTML = `
         ${id ? `<input type="hidden" name="fasilitas[${index}][id]" value="${id}">` : ''}
         <input type="text" name="fasilitas[${index}][nama_fasilitas]" value="${escHtml(nama)}"
             class="flex-1 px-4 py-2.5 rounded-lg border border-admin-border bg-admin-card text-admin-text focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors"
             placeholder="Nama fasilitas (contoh: Hotel Bintang 5)">
+        ${imgHtml}
+        <input type="file" name="fasilitas[${index}][image]" accept="image/*" title="Ganti Gambar"
+            class="w-48 px-3 py-2 rounded-lg border border-admin-border bg-admin-card text-admin-text focus:ring-2 focus:ring-amber-500 transition-colors text-sm">
         <select name="fasilitas[${index}][tipe_fasilitas]"
-            class="w-44 px-3 py-2.5 rounded-lg border border-admin-border bg-admin-card text-admin-text focus:ring-2 focus:ring-amber-500 text-sm">
+            class="w-36 px-3 py-2.5 rounded-lg border border-admin-border bg-admin-card text-admin-text focus:ring-2 focus:ring-amber-500 text-sm">
             <option value="konsumsi" ${tipe==='konsumsi'?'selected':''}>🍽 Konsumsi</option>
             <option value="akomodasi" ${tipe==='akomodasi'?'selected':''}>🏨 Akomodasi</option>
             <option value="transportasi" ${tipe==='transportasi'?'selected':''}>🚌 Transportasi</option>
@@ -278,8 +310,8 @@ function escHtml(str) {
 // ── Populate existing data on DOM ready ────────────────────────
 document.addEventListener('DOMContentLoaded', function () {
     existingRundowns.forEach(r => addRundownField(r.id, r.waktu, r.acara, r.deskripsi));
-    existingTempats.forEach(t => addTempatField(t.id, t.nama_tempat));
-    existingFasilitas.forEach(f => addFasilitasField(f.id, f.nama_fasilitas, f.tipe_fasilitas));
+    existingDestinasis.forEach(t => addDestinasiField(t.id, t.nama_destinasi, t.image));
+    existingFasilitas.forEach(f => addFasilitasField(f.id, f.nama_fasilitas, f.tipe_fasilitas, f.image));
 });
 </script>
 @endpush

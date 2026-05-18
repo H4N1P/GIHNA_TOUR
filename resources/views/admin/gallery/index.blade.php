@@ -14,14 +14,36 @@
         </a>
     </div>
 
+    {{-- Filter Tabs --}}
+    <div class="flex flex-wrap gap-2 mb-6">
+        @php
+            $tabs = [
+                'semua' => ['label' => 'Semua'],
+                'destinasi' => ['label' => 'Destinasi'],
+                'fasilitas' => ['label' => 'Fasilitas'],
+                'dokumentasi' => ['label' => 'Dokumentasi'],
+            ];
+        @endphp
+        @foreach ($tabs as $key => $tab)
+            <a href="{{ route('admin.gallery.index', ['filter' => $key]) }}"
+                class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg border transition-colors
+                    {{ $filter === $key
+                        ? 'bg-amber-500 text-white border-amber-500'
+                        : 'bg-admin-card text-admin-text border-admin-border hover:bg-admin-bg' }}">
+                {{ $tab['label'] }}
+            </a>
+        @endforeach
+    </div>
+
     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
         @forelse($galleries as $g)
-            <div
-                class="bg-admin-card rounded-xl border border-admin-border overflow-hidden group">
+            <div class="bg-admin-card rounded-xl border border-admin-border overflow-hidden group">
                 <div class="relative h-40">
                     @if ($g->type === 'video')
                         <div class="w-full h-full bg-admin-bg flex items-center justify-center">
-                            <svg class="w-12 h-12 text-amber-500" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                            <svg class="w-12 h-12 text-amber-500" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M8 5v14l11-7z" />
+                            </svg>
                         </div>
                     @elseif ($g->path)
                         <img src="{{ asset('storage/' . $g->path) }}" alt="Gallery" class="w-full h-full object-cover">
@@ -39,9 +61,9 @@
                         @if ($g->type === 'video')
                             <span class="px-1.5 py-0.5 text-xs font-bold rounded bg-purple-500 text-white">Video</span>
                         @endif
-                        @if ($g->tempat || $g->fasilitas)
+                        @if ($g->destinasi || $g->fasilitas)
                             <span class="px-1.5 py-0.5 text-xs font-bold rounded bg-amber-500 text-white">
-                                {{ $g->tempat ? 'Tempat' : 'Fasilitas' }}
+                                {{ $g->destinasi ? 'Destinasi' : 'Fasilitas' }}
                             </span>
                         @endif
                     </div>
@@ -58,8 +80,8 @@
                                     d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                             </svg>
                         </a>
-                        <form action="{{ route('admin.gallery.destroy', $g->id) }}" method="POST"
-                            data-confirm="delete" data-confirm-title="Apakah anda yakin menghapus media?"
+                        <form action="{{ route('admin.gallery.destroy', $g->id) }}" method="POST" data-confirm="delete"
+                            data-confirm-title="Apakah anda yakin menghapus media?"
                             data-confirm-message="Data akan hilang dan tidak bisa dikembalikan">
                             @csrf @method('DELETE')
                             <button type="submit"
@@ -74,12 +96,12 @@
                 </div>
 
                 <div class="p-3">
-                    @if ($g->tempat)
+                    @if ($g->destinasi)
                         <p class="text-xs font-medium text-admin-text truncate">
-                            📍 {{ $g->tempat->nama_tempat }}
+                            📍 {{ $g->destinasi->nama_destinasi }}
                         </p>
-                        @if ($g->tempat->paket)
-                            <p class="text-xs text-admin-muted mt-0.5 truncate">{{ $g->tempat->paket->nama_paket }}</p>
+                        @if ($g->destinasi->paket)
+                            <p class="text-xs text-admin-muted mt-0.5 truncate">{{ $g->destinasi->paket->nama_paket }}</p>
                         @endif
                     @elseif($g->fasilitas)
                         <p class="text-xs font-medium text-admin-text truncate">

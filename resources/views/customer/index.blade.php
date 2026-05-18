@@ -222,21 +222,27 @@
                                 ? $foto->path
                                 : asset('storage/' . $foto->path))
                             : null;
+                        $isVideo = $foto->type === 'video';
                         
                         // Pola Grid Figma (2 Baris, 4 Slot/Baris):
                         // Baris 1: 1 foto (span 2) kiri, 2 foto (span 1) kanan -> index 0, 1, 2
                         // Baris 2: dibalik, 2 foto (span 1) kiri, 1 foto (span 2) kanan -> index 3, 4, 5
                         $span = in_array($index % 6, [0, 5]) ? 'md:col-span-2' : 'md:col-span-1';
                     @endphp
-                    <div class="galeri-item {{ $span }} h-[180px] rounded-lg p-3 md:h-[210px]"
-                        style="background:var(--bg-section);border:1px solid var(--border);">
-                        @if ($src && $foto->type === 'video')
+                    <div class="galeri-item {{ $span }} h-[180px] rounded-lg p-3 md:h-[210px] cursor-pointer relative group"
+                        style="background:var(--bg-section);border:1px solid var(--border);"
+                        onclick="openLightbox('{{ $src }}', '{{ $foto->keterangan ?? 'Galeri' }}', {{ $isVideo ? 'true' : 'false' }})">
+                        @if ($src && $isVideo)
                             <video class="h-full w-full rounded-md object-cover" muted preload="metadata">
                                 <source src="{{ $src }}" type="video/mp4">
                             </video>
+                            <div class="absolute inset-3 flex items-center justify-center rounded-md bg-black/20 group-hover:bg-black/40 transition-all">
+                                <svg class="w-12 h-12 text-white/80" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                            </div>
                         @elseif ($src)
                             <img class="h-full w-full rounded-md object-cover" src="{{ $src }}"
                                 alt="{{ $foto->keterangan ?? 'Galeri' }}" loading="lazy">
+                            <div class="absolute inset-3 rounded-md bg-black/0 group-hover:bg-black/25 transition-all"></div>
                         @else
                             <div class="flex h-full w-full items-center justify-center rounded-md"
                                 style="background:var(--bg-section);color:#9ca3af;">

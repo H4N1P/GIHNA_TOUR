@@ -43,6 +43,6 @@ class Pesanan extends Model
         if ($this->is_custom) {
             return $this->custom_places ?? [];
         }
-        return $this->paket?->tempats->pluck('nama_tempat') ?? [];
+        return $this->paket?->destinasis->pluck('nama_destinasi') ?? [];
     }
 }

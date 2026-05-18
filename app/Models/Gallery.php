@@ -7,30 +7,30 @@ use Illuminate\Database\Eloquent\Model;
 
 class Gallery extends Model
 {
-    protected $fillable = ['path', 'keterangan', 'type', 'id_fasilitas', 'id_tempat'];
+    protected $fillable = ['path', 'keterangan', 'type', 'id_fasilitas', 'id_destinasi'];
 
     public function fasilitas()
     {
         return $this->belongsTo(Fasilitas::class);
     }
 
-    public function tempat()
+    public function destinasi()
     {
-        return $this->belongsTo(Tempat::class, 'id_tempat');
+        return $this->belongsTo(Destinasi::class, 'id_destinasi');
     }
 
     /**
-     * Get the paket through tempat relationship.
+     * Get the paket through destinasi relationship.
      */
     public function paket()
     {
         return $this->hasOneThrough(
             \App\Models\Paket::class,
-            \App\Models\Tempat::class,
-            'id',           // tempats.id
+            \App\Models\Destinasi::class,
+            'id',           // destinasis.id
             'id',           // pakets.id
-            'id_tempat',    // galleries.id_tempat
-            'id_paket'      // tempats.id_paket
+            'id_destinasi', // galleries.id_destinasi
+            'id_paket'      // destinasis.id_paket
         );
     }
 

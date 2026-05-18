@@ -6,16 +6,18 @@ use App\Http\Controllers\Controller;
 use App\Models\Fasilitas;
 use App\Models\Paket;
 use App\Models\Rundown;
-use App\Models\Tempat;
+use App\Models\Destinasi;
+use App\Traits\ImageCompressor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class PaketController extends Controller
 {
+    use ImageCompressor;
     public function index()
     {
-        $pakets = Paket::with(['fasilitas', 'tempats.galleries'])
+        $pakets = Paket::with(['fasilitas', 'destinasis.galleries'])
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
@@ -35,45 +37,63 @@ class PaketController extends Controller
             'durasi'          => 'required|string|max:255',
             'note'            => 'nullable|string',
 
+            'image'           => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+
             // Nested Rundown
             'rundowns'                => 'nullable|array',
             'rundowns.*.waktu'        => 'required|string|max:255',
             'rundowns.*.acara'        => 'required|string|max:255',
             'rundowns.*.deskripsi'    => 'nullable|string',
 
-            // Nested Tempat
-            'tempats'                  => 'nullable|array',
-            'tempats.*.nama_tempat'    => 'required|string|max:255',
+            // Nested Destinasi
+            'destinasis'                  => 'nullable|array',
+            'destinasis.*.nama_destinasi' => 'required|string|max:255',
+            'destinasis.*.image'          => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
 
             // Other relations (text only)
             'fasilitas'                => 'nullable|array',
             'fasilitas.*.nama_fasilitas' => 'required|string',
             'fasilitas.*.tipe_fasilitas' => 'required|string|in:konsumsi,akomodasi,transportasi',
+            'fasilitas.*.image'          => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
         DB::beginTransaction();
 
         try {
-            $paket = Paket::create($request->only([
-                'nama_paket', 'harga_paket', 'durasi', 'rundown', 'note'
-            ]));
+            $paketData = $request->only(['nama_paket', 'harga_paket', 'durasi', 'note']);
+            
+            if ($request->hasFile('image')) {
+                $paketData['image'] = $this->compressAndStoreImage($request->file('image'), 'images/paket');
+            }
 
-            // === Handle Tempat ===
-            if ($request->has('tempats')) {
-                foreach ($request->tempats as $tempat) {
-                    $paket->tempats()->create([
-                        'nama_tempat' => $tempat['nama_tempat'],
-                    ]);
+            $paket = Paket::create($paketData);
+
+            // === Handle Destinasi ===
+            if ($request->has('destinasis')) {
+                foreach ($request->destinasis as $index => $destinasiData) {
+                    $payload = ['nama_destinasi' => $destinasiData['nama_destinasi']];
+                    
+                    if ($request->hasFile("destinasis.{$index}.image")) {
+                        $payload['image'] = $this->compressAndStoreImage($request->file("destinasis.{$index}.image"), 'images/destinasi');
+                    }
+                    
+                    $paket->destinasis()->create($payload);
                 }
             }
 
             // === Handle Fasilitas ===
             if ($request->has('fasilitas')) {
-                foreach ($request->fasilitas as $fasilitas) {
-                    $paket->fasilitas()->create([
-                        'nama_fasilitas' => $fasilitas['nama_fasilitas'],
-                        'tipe_fasilitas' => $fasilitas['tipe_fasilitas'],
-                    ]);
+                foreach ($request->fasilitas as $index => $fasilitasData) {
+                    $payload = [
+                        'nama_fasilitas' => $fasilitasData['nama_fasilitas'],
+                        'tipe_fasilitas' => $fasilitasData['tipe_fasilitas'],
+                    ];
+                    
+                    if ($request->hasFile("fasilitas.{$index}.image")) {
+                        $payload['image'] = $this->compressAndStoreImage($request->file("fasilitas.{$index}.image"), 'images/fasilitas');
+                    }
+
+                    $paket->fasilitas()->create($payload);
                 }
             }
 
@@ -124,6 +144,8 @@ class PaketController extends Controller
             'durasi'          => 'required|string|max:255',
             'note'            => 'nullable|string',
 
+            'image'           => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+
             // Nested Rundown
             'rundowns'                => 'nullable|array',
             'rundowns.*.id'           => 'nullable|exists:rundowns,id',
@@ -131,25 +153,37 @@ class PaketController extends Controller
             'rundowns.*.acara'        => 'required|string|max:255',
             'rundowns.*.deskripsi'    => 'nullable|string',
 
-            // Nested Tempat
-            'tempats'                  => 'nullable|array',
-            'tempats.*.nama_tempat'    => 'required|string|max:255',
+            // Nested Destinasi
+            'destinasis'                  => 'nullable|array',
+            'destinasis.*.id'             => 'nullable|exists:destinasis,id',
+            'destinasis.*.nama_destinasi' => 'required|string|max:255',
+            'destinasis.*.image'          => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
 
             // Other relations (text only)
             'fasilitas'                => 'nullable|array',
+            'fasilitas.*.id'             => 'nullable|exists:fasilitas,id',
             'fasilitas.*.nama_fasilitas' => 'required|string',
             'fasilitas.*.tipe_fasilitas' => 'required|string|in:konsumsi,akomodasi,transportasi',
+            'fasilitas.*.image'          => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
-        $paket->update($request->only([
-            'nama_paket', 'harga_paket', 'durasi', 'rundown', 'note'
-        ]));
+        $paketData = $request->only(['nama_paket', 'harga_paket', 'durasi', 'note']);
+        
+        if ($request->hasFile('image')) {
+            // Delete old image if exists
+            if ($paket->image && Storage::disk('public')->exists($paket->image)) {
+                Storage::disk('public')->delete($paket->image);
+            }
+            $paketData['image'] = $this->compressAndStoreImage($request->file('image'), 'images/paket');
+        }
 
-        // Handle Tempats safely
-        $this->syncChildWithImages($paket, 'tempats', $request->tempats ?? [], Tempat::class);
+        $paket->update($paketData);
+
+        // Handle Destinasis safely
+        $this->syncChildWithImages($paket, 'destinasis', $request->destinasis ?? [], Destinasi::class, $request);
     
         // Handle Fasilitas safely
-        $this->syncChildWithImages($paket, 'fasilitas', $request->fasilitas ?? [], Fasilitas::class);
+        $this->syncChildWithImages($paket, 'fasilitas', $request->fasilitas ?? [], Fasilitas::class, $request);
 
         // Handle Rundowns safely
         $this->syncRundowns($paket, $request->rundowns ?? []);
@@ -161,11 +195,24 @@ class PaketController extends Controller
     public function destroy(Paket $paket)
     {
         // Optional: delete all related photos from storage
-        foreach ($paket->tempats as $tempat) {
-            foreach ($tempat->fotos as $foto) {
+        if ($paket->image && Storage::disk('public')->exists($paket->image)) {
+            Storage::disk('public')->delete($paket->image);
+        }
+
+        foreach ($paket->destinasis as $destinasi) {
+            if ($destinasi->image && Storage::disk('public')->exists($destinasi->image)) {
+                Storage::disk('public')->delete($destinasi->image);
+            }
+            foreach ($destinasi->galleries as $foto) {
                 if (Storage::disk('public')->exists($foto->path)) {
                     Storage::disk('public')->delete($foto->path);
                 }
+            }
+        }
+        
+        foreach ($paket->fasilitas as $f) {
+            if ($f->image && Storage::disk('public')->exists($f->image)) {
+                Storage::disk('public')->delete($f->image);
             }
         }
 
@@ -175,14 +222,12 @@ class PaketController extends Controller
             ->with('success', 'Paket berhasil dihapus');
     }
 
-    /**
-     * Sync child records (tempat or fasilitas) while preserving existing images
-     */
     private function syncChildWithImages(
         Paket $paket,
         string $relation,
         array $incomingData,
-        string $modelClass
+        string $modelClass,
+        Request $request
     ) {
         if (empty($incomingData)) {
             $paket->{$relation}()->delete();
@@ -194,21 +239,41 @@ class PaketController extends Controller
             ->filter()
             ->all();
     
+        $existingChilds = $paket->{$relation}()->whereNotIn('id', $incomingIds)->get();
+        foreach($existingChilds as $child) {
+            if ($child->image && Storage::disk('public')->exists($child->image)) {
+                Storage::disk('public')->delete($child->image);
+            }
+        }
+    
         $paket->{$relation}()
             ->whereNotIn('id', $incomingIds)
             ->delete();
     
-        foreach ($incomingData as $item) {
+        foreach ($incomingData as $index => $item) {
     
-            if ($relation === 'tempats') {
+            if ($relation === 'destinasis') {
                 $payload = [
-                    'nama_tempat' => $item['nama_tempat'],
+                    'nama_destinasi' => $item['nama_destinasi'],
                 ];
             } else {
                 $payload = [
                     'nama_fasilitas' => $item['nama_fasilitas'],
                     'tipe_fasilitas' => $item['tipe_fasilitas'],
                 ];
+            }
+
+            // Check if file is uploaded
+            if ($request->hasFile("{$relation}.{$index}.image")) {
+                $payload['image'] = $this->compressAndStoreImage($request->file("{$relation}.{$index}.image"), "images/" . rtrim($relation, 's'));
+                
+                // delete old image if updating
+                if (!empty($item['id'])) {
+                    $oldChild = $modelClass::find($item['id']);
+                    if ($oldChild && $oldChild->image && Storage::disk('public')->exists($oldChild->image)) {
+                        Storage::disk('public')->delete($oldChild->image);
+                    }
+                }
             }
     
             if (!empty($item['id'])) {

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->string('tipe_fasilitas');
+            $table->string('image')->nullable();
             $table->unsignedBigInteger('id_paket');
             $table->string('nama_fasilitas');
             $table->foreign('id_paket')->references('id')->on('pakets')->onDelete('cascade');

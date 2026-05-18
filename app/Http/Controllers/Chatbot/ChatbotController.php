@@ -129,7 +129,7 @@ class ChatbotController extends Controller
 
         // 1. Gather Context Data from Database
         $company = CompanyProfile::first();
-        $pakets = Paket::with(['fasilitas', 'tempats'])->get();
+        $pakets = Paket::with(['fasilitas', 'destinasis'])->get();
 
         // 2. Build the System Prompt (RAG - Retrieval Augmented Generation)
         $context = "Anda adalah Customer Service cerdas dari agen travel 'Ghina Tour Travel'.\n";
@@ -151,8 +151,8 @@ class ChatbotController extends Controller
                 $context .= "- Paket: {$p->nama_paket}\n";
                 $context .= "  Durasi: {$p->durasi}\n";
                 $context .= "  Harga: Rp " . number_format($p->harga_paket, 0, ',', '.') . "\n";
-                if ($p->tempats->isNotEmpty()) {
-                    $context .= "  Tujuan: " . implode(', ', $p->tempats->pluck('nama_tempat')->toArray()) . "\n";
+                if ($p->destinasis->isNotEmpty()) {
+                    $context .= "  Tujuan: " . implode(', ', $p->destinasis->pluck('nama_destinasi')->toArray()) . "\n";
                 }
                 if ($p->note) {
                     $context .= "  Catatan Khusus: {$p->note}\n";

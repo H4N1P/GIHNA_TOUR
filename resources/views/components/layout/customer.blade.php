@@ -24,6 +24,8 @@
     <x-chatbot-widget mode="public" />
 
 
+    @include('components.customer.lightbox')
+
     @include('components.layout.scripts')
     @yield('extra_scripts')
 </body>

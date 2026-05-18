@@ -11,7 +11,8 @@ class Fasilitas extends Model
     protected $fillable = [
         'id_paket',
         'tipe_fasilitas',
-        'nama_fasilitas'
+        'nama_fasilitas',
+        'image'
     ];
 
     public function paket()

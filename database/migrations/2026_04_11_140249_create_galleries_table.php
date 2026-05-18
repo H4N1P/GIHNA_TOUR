@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('galleries', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('id_fasilitas')->nullable();
-            $table->unsignedBigInteger('id_tempat')->nullable();
+            $table->unsignedBigInteger('id_destinasi')->nullable();
             $table->foreign('id_fasilitas')->references('id')->on('fasilitas')->onDelete('cascade');
-            $table->foreign('id_tempat')->references('id')->on('tempats')->onDelete('cascade');
+            $table->foreign('id_destinasi')->references('id')->on('destinasis')->onDelete('cascade');
             $table->string('path');
             $table->string('keterangan')->nullable();
             $table->string('type')->default('image');

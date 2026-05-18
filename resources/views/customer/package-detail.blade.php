@@ -76,9 +76,8 @@
 @section('content')
     <!-- HERO / HEADER PAKET -->
     <div class="detail-hero relative h-[380px] lg:h-[420px] w-full overflow-hidden mt-[72px]">
-        @if ($paket->fotos && $paket->fotos->count() > 0)
-            @php $firstFoto = $paket->fotos->first(); @endphp
-            <img src="{{ Str::startsWith($firstFoto->path, 'http') ? $firstFoto->path : asset('storage/' . $firstFoto->path) }}"
+        @if ($paket->image)
+            <img src="{{ Str::startsWith($paket->image, 'http') ? $paket->image : asset('storage/' . $paket->image) }}"
                 alt="{{ $paket->nama_paket }}" class="absolute inset-0 w-full h-full object-cover" />
             <div class="absolute inset-0" style="background:rgba(0,0,0,.45);"></div>
         @else
@@ -91,27 +90,33 @@
             <div class="absolute inset-0" style="background:rgba(255,255,255,.35);"></div>
         @endif
         <div class="absolute inset-0 flex items-center justify-center flex-col gap-2 px-4 text-center">
-            <h1 class="text-[38px] font-bold {{ $paket->fotos && $paket->fotos->count() > 0 ? 'text-white' : 't' }}">
+            <h1 class="text-[38px] font-bold {{ $paket->image ? 'text-white' : 't' }}">
                 {{ $paket->nama_paket }}
             </h1>
-            <p class="{{ $paket->fotos && $paket->fotos->count() > 0 ? 'text-gray-200' : 'tm' }} text-base">Paket Wisata</p>
+            <p class="{{ $paket->image ? 'text-gray-200' : 'tm' }} text-base">Paket Wisata</p>
         </div>
     </div>
 
     <!-- MAIN CONTENT -->
     <main class="mx-auto max-w-[1280px] px-6 lg:px-14 py-10">
 
-        <!-- Destinasi / Tempat Wisata Images -->
-        @if ($paket->tempats && $paket->tempats->count() > 0)
+        <!-- Destinasi Wisata Images -->
+        @if ($paket->destinasis && $paket->destinasis->count() > 0)
             <div class="mb-10">
                 <h2 class="text-[22px] font-bold t mb-4">Destinasi Wisata</h2>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    @foreach ($paket->tempats as $tempat)
-                        <div class="tempat-card">
-                            @if ($tempat->galleries && $tempat->galleries->count() > 0)
-                                @php $firstGal = $tempat->galleries->first(); @endphp
-                                <img src="{{ Str::startsWith($firstGal->path, 'http') ? $firstGal->path : asset('storage/' . $firstGal->path) }}"
-                                    alt="{{ $tempat->nama_tempat }}" class="absolute inset-0 w-full h-full object-cover" />
+                    @foreach ($paket->destinasis as $tempat)
+                        @php
+                            $destSrc = $tempat->image
+                                ? (Str::startsWith($tempat->image, 'http') ? $tempat->image : asset('storage/' . $tempat->image))
+                                : null;
+                        @endphp
+                        <div class="tempat-card cursor-pointer group"
+                            @if($destSrc) onclick="openLightbox('{{ $destSrc }}', '{{ $tempat->nama_destinasi }}')" @endif>
+                            @if ($tempat->image)
+                                <img src="{{ $destSrc }}"
+                                    alt="{{ $tempat->nama_destinasi }}" class="absolute inset-0 w-full h-full object-cover" />
+                                <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all"></div>
                             @else
                                 <div class="placeholder-icon">
                                     <svg fill="currentColor" viewBox="0 0 24 24">
@@ -120,7 +125,7 @@
                                     </svg>
                                 </div>
                             @endif
-                            <div class="tempat-card__label">{{ $tempat->nama_tempat }}</div>
+                            <div class="tempat-card__label">{{ $tempat->nama_destinasi }}</div>
                         </div>
                     @endforeach
                 </div>
@@ -186,19 +191,17 @@
                     <p class="font-semibold t mb-2 text-[15px]">a. Transportasi</p>
                     <div class="space-y-1 ml-1">
                         @forelse ($transportasis as $transportasi)
-                            <div class="fas-item">
-                                <span class="tm text-sm">–</span>
+                            <div class="fas-item flex items-center gap-2">
+                                @if($transportasi->image)
+                                    <img src="{{ asset('storage/' . $transportasi->image) }}" class="w-5 h-5 rounded object-cover flex-shrink-0 cursor-pointer hover:ring-2 hover:ring-amber-400 transition-all" onclick="openLightbox('{{ asset('storage/' . $transportasi->image) }}', '{{ $transportasi->nama_fasilitas }}')" />
+                                @else
+                                    <span class="tm text-sm">–</span>
+                                @endif
                                 <span class="tm text-sm">{{ $transportasi->nama_fasilitas }}</span>
                             </div>
                         @empty
-                            <div class="fas-item"><span class="tm text-sm">–</span><span class="tm text-sm">Bus
-                                    Pariwisata</span></div>
-                            <div class="fas-item"><span class="tm text-sm">–</span><span class="tm text-sm">AC (Air
-                                    Conditioner)</span></div>
-                            <div class="fas-item"><span class="tm text-sm">–</span><span class="tm text-sm">Audio
-                                    System</span></div>
-                            <div class="fas-item"><span class="tm text-sm">–</span><span class="tm text-sm">Reclining
-                                    Seat</span></div>
+                            <div class="fas-item"><span class="tm text-sm">–</span><span class="tm text-sm">Bus Pariwisata</span></div>
+                            <div class="fas-item"><span class="tm text-sm">–</span><span class="tm text-sm">AC (Air Conditioner)</span></div>
                         @endforelse
                     </div>
                 </div>
@@ -207,19 +210,17 @@
                     <p class="font-semibold t mb-2 text-[15px]">b. Akomodasi</p>
                     <div class="space-y-1 ml-1">
                         @forelse ($akomodasis as $akomodasi)
-                            <div class="fas-item">
-                                <span class="tm text-sm">–</span>
+                            <div class="fas-item flex items-center gap-2">
+                                @if($akomodasi->image)
+                                    <img src="{{ asset('storage/' . $akomodasi->image) }}" class="w-5 h-5 rounded object-cover flex-shrink-0 cursor-pointer hover:ring-2 hover:ring-amber-400 transition-all" onclick="openLightbox('{{ asset('storage/' . $akomodasi->image) }}', '{{ $akomodasi->nama_fasilitas }}')" />
+                                @else
+                                    <span class="tm text-sm">–</span>
+                                @endif
                                 <span class="tm text-sm">{{ $akomodasi->nama_fasilitas }}</span>
                             </div>
                         @empty
-                            <div class="fas-item"><span class="tm text-sm">–</span><span class="tm text-sm">Tour
-                                    Leader</span></div>
-                            <div class="fas-item"><span class="tm text-sm">–</span><span class="tm text-sm">Tiket Masuk
-                                    Objek Wisata</span></div>
-                            <div class="fas-item"><span class="tm text-sm">–</span><span class="tm text-sm">P3K + Asuransi
-                                    Wisata</span></div>
-                            <div class="fas-item"><span class="tm text-sm">–</span><span class="tm text-sm">Retribusi
-                                    Perjalanan (Tol, Parkir, dll)</span></div>
+                            <div class="fas-item"><span class="tm text-sm">–</span><span class="tm text-sm">Tour Leader</span></div>
+                            <div class="fas-item"><span class="tm text-sm">–</span><span class="tm text-sm">Tiket Masuk Objek Wisata</span></div>
                         @endforelse
                     </div>
                 </div>
@@ -228,17 +229,17 @@
                     <p class="font-semibold t mb-2 text-[15px]">c. Konsumsi</p>
                     <div class="space-y-1 ml-1">
                         @forelse ($konsumsis as $konsumsi)
-                            <div class="fas-item">
-                                <span class="tm text-sm">–</span>
+                            <div class="fas-item flex items-center gap-2">
+                                @if($konsumsi->image)
+                                    <img src="{{ asset('storage/' . $konsumsi->image) }}" class="w-5 h-5 rounded object-cover flex-shrink-0 cursor-pointer hover:ring-2 hover:ring-amber-400 transition-all" onclick="openLightbox('{{ asset('storage/' . $konsumsi->image) }}', '{{ $konsumsi->nama_fasilitas }}')" />
+                                @else
+                                    <span class="tm text-sm">–</span>
+                                @endif
                                 <span class="tm text-sm">{{ $konsumsi->nama_fasilitas }}</span>
                             </div>
                         @empty
-                            <div class="fas-item"><span class="tm text-sm">–</span><span class="tm text-sm">Makan 2x</span>
-                            </div>
-                            <div class="fas-item"><span class="tm text-sm">–</span><span class="tm text-sm">Snack</span>
-                            </div>
-                            <div class="fas-item"><span class="tm text-sm">–</span><span class="tm text-sm">Air
-                                    Mineral</span></div>
+                            <div class="fas-item"><span class="tm text-sm">–</span><span class="tm text-sm">Makan 2x</span></div>
+                            <div class="fas-item"><span class="tm text-sm">–</span><span class="tm text-sm">Air Mineral</span></div>
                         @endforelse
                     </div>
                 </div>

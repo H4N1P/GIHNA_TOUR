@@ -40,7 +40,7 @@ class PesananController extends Controller
      */
     public function create()
     {
-        $pakets = Paket::with(['fasilitas', 'tempats'])->get();
+        $pakets = Paket::with(['fasilitas', 'destinasis'])->get();
         return view('admin.pesanan.create', compact('pakets'));
     }
 
@@ -49,7 +49,7 @@ class PesananController extends Controller
      */
     public function createCustom()
     {
-        $pakets = Paket::with(['fasilitas', 'tempats'])->get();
+        $pakets = Paket::with(['fasilitas', 'destinasis'])->get();
         return view('admin.pesanan.create-custom', compact('pakets'));
     }
 
@@ -138,7 +138,7 @@ class PesananController extends Controller
     public function edit(Pesanan $pesanan)
     {
         $id = $pesanan; // Keep $id for view compatibility
-        $pakets = Paket::with(['fasilitas', 'tempats'])->get();
+        $pakets = Paket::with(['fasilitas', 'destinasis'])->get();
         
         if ($pesanan->is_custom) {
             return view('admin.pesanan.edit-custom', compact('id', 'pakets'));
