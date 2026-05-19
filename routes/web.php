@@ -62,7 +62,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| Chatbot API Routes (Admin-only, rule-based)
+| Chatbot API Routes (Admin-only, AI customer service)
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth')->prefix('api/chatbot')->name('chatbot.')->group(function () {
