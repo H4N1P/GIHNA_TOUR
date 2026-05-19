@@ -34,4 +34,9 @@ class Paket extends Model
     {
         return $this->hasMany(Rundown::class, 'id_paket');
     }
+
+    public function pesanans()
+    {
+        return $this->hasMany(Pesanan::class, 'id_paket');
+    }
 }

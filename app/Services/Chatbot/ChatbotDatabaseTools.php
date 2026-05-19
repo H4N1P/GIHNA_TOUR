@@ -33,6 +33,11 @@ class ChatbotDatabaseTools
                             'type' => 'number',
                             'description' => 'Maximum package price in Indonesian Rupiah if the customer asks for a budget or cheapest options.',
                         ],
+                        'sort_by' => [
+                            'type' => 'string',
+                            'description' => 'How to sort packages. Use "cheapest" for cheapest, "expensive" for most expensive, and "popular" for most popular / best seller / paling laris.',
+                            'enum' => ['cheapest', 'expensive', 'popular'],
+                        ],
                     ],
                 ],
             ],
@@ -106,20 +111,23 @@ class ChatbotDatabaseTools
     {
         $query = trim((string) ($arguments['query'] ?? ''));
         $maxPrice = isset($arguments['max_price']) ? (float) $arguments['max_price'] : null;
+        $sortBy = trim((string) ($arguments['sort_by'] ?? 'cheapest'));
 
         $pakets = Paket::query()
-            ->with(['tempats', 'fasilitas'])
+            ->with(['destinasis', 'fasilitas'])
             ->when($query !== '', function ($builder) use ($query) {
                 $builder->where(function ($nested) use ($query) {
                     $nested
                         ->where('nama_paket', 'like', "%{$query}%")
                         ->orWhere('note', 'like', "%{$query}%")
-                        ->orWhereHas('tempats', fn ($tempat) => $tempat->where('nama_tempat', 'like', "%{$query}%"))
+                        ->orWhereHas('destinasis', fn ($destinasi) => $destinasi->where('nama_destinasi', 'like', "%{$query}%"))
                         ->orWhereHas('fasilitas', fn ($fasilitas) => $fasilitas->where('nama_fasilitas', 'like', "%{$query}%"));
                 });
             })
             ->when($maxPrice !== null && $maxPrice > 0, fn ($builder) => $builder->where('harga_paket', '<=', $maxPrice))
-            ->orderBy('harga_paket')
+            ->when($sortBy === 'expensive', fn ($builder) => $builder->orderBy('harga_paket', 'desc'))
+            ->when($sortBy === 'popular', fn ($builder) => $builder->withCount('pesanans')->orderBy('pesanans_count', 'desc'))
+            ->when($sortBy === 'cheapest' || !in_array($sortBy, ['expensive', 'popular']), fn ($builder) => $builder->orderBy('harga_paket', 'asc'))
             ->limit(8)
             ->get();
 
@@ -131,7 +139,7 @@ class ChatbotDatabaseTools
                 'name' => $paket->nama_paket,
                 'duration' => $paket->durasi,
                 'price' => (float) $paket->harga_paket,
-                'destinations' => $paket->tempats->pluck('nama_tempat')->values(),
+                'destinations' => $paket->destinasis->pluck('nama_destinasi')->values(),
                 'facilities' => $paket->fasilitas->map(fn ($fasilitas) => [
                     'type' => $fasilitas->tipe_fasilitas,
                     'name' => $fasilitas->nama_fasilitas,
@@ -144,7 +152,7 @@ class ChatbotDatabaseTools
     private function packageDetail(int $packageId): array
     {
         $paket = Paket::query()
-            ->with(['tempats', 'fasilitas', 'rundowns'])
+            ->with(['destinasis', 'fasilitas', 'rundowns'])
             ->find($packageId);
 
         return [
@@ -154,7 +162,7 @@ class ChatbotDatabaseTools
                 'name' => $paket->nama_paket,
                 'duration' => $paket->durasi,
                 'price' => (float) $paket->harga_paket,
-                'destinations' => $paket->tempats->pluck('nama_tempat')->values(),
+                'destinations' => $paket->destinasis->pluck('nama_destinasi')->values(),
                 'facilities' => $paket->fasilitas->map(fn ($fasilitas) => [
                     'type' => $fasilitas->tipe_fasilitas,
                     'name' => $fasilitas->nama_fasilitas,
