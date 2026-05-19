@@ -5,8 +5,10 @@
 @section('content')
     <section id="beranda" class="relative h-[660px] w-full overflow-hidden">
         <div class="absolute inset-0 z-10" style="background:var(--hero-overlay);"></div>
-        <div class="absolute inset-0 z-0 bg-cover bg-center"
-            style="background-image:url('{{ asset('customer/assets/images/backgrounds/bg-hero.jpg') }}');"></div>
+        <video autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover z-0" poster="{{ asset('customer/assets/images/backgrounds/bg-hero.jpg') }}">
+            <source src="{{ asset('customer/assets/videos/hero-video.mp4') }}" type="video/mp4">
+            <div class="absolute inset-0 bg-cover bg-center" style="background-image:url('{{ asset('customer/assets/images/backgrounds/bg-hero.jpg') }}');"></div>
+        </video>
 
         <div class="relative z-20 mx-auto grid h-full max-w-[1280px] items-center px-6 pt-20 lg:px-14">
             <div class="fade-in">
