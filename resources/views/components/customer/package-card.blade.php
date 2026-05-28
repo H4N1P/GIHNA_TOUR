@@ -7,7 +7,7 @@
 <a href="{{ route('package.detail', $paket->id) }}" class="package-card" aria-label="Lihat {{ $paket->nama_paket }}">
     <div class="package-card__media">
         @if ($coverSrc)
-            <img src="{{ $coverSrc }}" alt="{{ $paket->nama_paket }}" loading="lazy">
+            <img src="{{ $coverSrc }}" alt="{{ $paket->nama_paket }}" class="h-full w-full max-w-full object-cover" loading="lazy">
         @else
             <div class="package-card__placeholder">
                 <svg fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">

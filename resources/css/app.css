@@ -10,4 +10,105 @@
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+    --color-admin-bg: #f3f4f6;
+    --color-admin-card: #ffffff;
+    --color-admin-text: #1f2637;
+    --color-admin-muted: #667085;
+    --color-admin-border: #d7dce5;
+    --color-admin-orange: #ff7a1a;
+    --color-admin-gold: #f5b000;
+}
+
+.tgl {
+    position: relative;
+    width: 96px;
+    height: 48px;
+    cursor: pointer;
+    flex-shrink: 0;
+    border-radius: 999px;
+    transition: transform .18s ease, filter .18s ease;
+}
+
+.tgl:hover {
+    transform: translateY(-1px);
+    filter: saturate(1.04);
+}
+
+.tgl:active {
+    transform: translateY(0) scale(.98);
+}
+
+.tgl input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+    pointer-events: none;
+}
+
+.tgl .sl {
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    background: var(--gold, var(--admin-gold, #f5b000));
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 14px;
+    color: #fff;
+    border: 2px solid rgba(255,255,255,.55);
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,.06), 0 10px 22px rgba(245,176,0,.22);
+    transition: box-shadow .2s ease, border-color .2s ease, background .2s ease;
+}
+
+.tgl .sl::after {
+    display: none;
+}
+
+.tgl__icon {
+    position: relative;
+    z-index: 1;
+    width: 24px;
+    height: 24px;
+    border-radius: 999px;
+    padding: 4px;
+    color: #fff;
+    flex-shrink: 0;
+    transition: background .2s ease, color .2s ease, opacity .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+
+[data-theme="light"] .tgl__icon:first-child,
+[data-theme="dark"] .tgl__icon:last-child {
+    background: rgba(255,255,255,.94);
+    color: var(--gold-dark, var(--admin-orange, #c48a00));
+    transform: scale(1.08);
+    box-shadow: 0 4px 12px rgba(0,0,0,.16);
+}
+
+[data-theme="light"] .tgl__icon:last-child,
+[data-theme="dark"] .tgl__icon:first-child {
+    opacity: .72;
+}
+
+.tgl:focus-within {
+    outline: none;
+}
+
+.tgl:focus-within .sl {
+    border-color: rgba(245,176,0,.85);
+    box-shadow:
+        inset 0 0 0 1px rgba(0,0,0,.06),
+        0 0 0 3px rgba(245,176,0,.28),
+        0 10px 22px rgba(245,176,0,.24);
+}
+
+@media (max-width: 640px) {
+    .tgl {
+        width: 76px;
+        height: 44px;
+    }
+
+    .tgl .sl {
+        padding: 0 11px;
+    }
 }

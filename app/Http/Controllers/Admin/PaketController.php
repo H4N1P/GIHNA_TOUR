@@ -17,7 +17,7 @@ class PaketController extends Controller
     use ImageCompressor;
     public function index()
     {
-        $pakets = Paket::with(['fasilitas', 'destinasis.galleries'])
+        $pakets = Paket::with(['fasilitas', 'destinasis.galleries', 'rundowns'])
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 

@@ -59,13 +59,3 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     // AJAX endpoint for gallery dependent dropdown
     Route::get('/api/gallery/relations', [GalleryController::class, 'getRelationsByPaket'])->name('gallery.relations');
 });
-
-/*
-|--------------------------------------------------------------------------
-| Chatbot API Routes (Admin-only, AI customer service)
-|--------------------------------------------------------------------------
-*/
-Route::middleware('auth')->prefix('api/chatbot')->name('chatbot.')->group(function () {
-    Route::get('/menu', [ChatbotController::class, 'getMenu'])->name('menu');
-    Route::post('/message', [ChatbotController::class, 'handleMessage'])->name('message');
-});

@@ -189,10 +189,10 @@
         }
     </style>
 
-    <h1 style="font-size:26px;font-weight:700;color:var(--text);margin:0 0 24px;">Dashboard</h1>
+    <h1 class="mb-6 text-2xl font-bold text-[var(--admin-text)] sm:text-[26px]">Dashboard</h1>
 
     {{-- ── Stat Cards ── --}}
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:32px;">
+    <div class="mb-8 grid grid-cols-1 gap-[18px] md:grid-cols-2 xl:grid-cols-3">
 
         {{-- Total Paket --}}
         <div class="stat-card">
@@ -245,11 +245,10 @@
 
     {{-- ── Tabel Pesanan Terbaru ── --}}
     <div class="adm-card">
-        <div
-            style="padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
-            <h2 style="font-size:16px;font-weight:700;color:var(--text);margin:0;">Pesanan Terbaru</h2>
+        <div class="flex flex-col gap-3 border-b border-[var(--border)] px-5 py-[18px] sm:flex-row sm:items-center sm:justify-between">
+            <h2 class="text-base font-bold text-[var(--admin-text)]">Pesanan Terbaru</h2>
             <a href="{{ route('admin.pesanan.index') }}"
-                style="font-size:13px;color:var(--gold);font-weight:600;text-decoration:none;">
+                class="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--gold)]">
                 Lihat Semua →
             </a>
         </div>
@@ -275,7 +274,7 @@
                             <td style="color:var(--text-muted);font-size:13px;">{{ $i + 1 }}</td>
                             <td style="font-weight:500;">{{ $p->nama_pemesan }}</td>
                             <td style="color:var(--text-muted);">{{ $p->no_hp }}</td>
-                            <td>{{ $p->paket->nama_paket ?? '-' }}</td>
+                            <td>{{ $p->is_custom ? 'Custom' : ($p->paket->nama_paket ?? '-') }}</td>
                             <td>{{ $p->jumlah_orang }} Orang</td>
                             <td>{{ \Carbon\Carbon::parse($p->tanggal_acara)->format('d M Y') }}</td>
                             {{-- <td>
@@ -291,7 +290,7 @@
                                 @endif
                             </td> --}}
                             <td class="px-4 py-3 text-sm">
-                                <div class="font-semibold text-admin-text">
+                                <div class="font-semibold text-[var(--text)]">
                                     Rp {{ number_format($p->total_harga, 0, ',', '.') }}
                                 </div>
                                 @if ($p->diskon > 0)
@@ -334,17 +333,17 @@
     </div>
 
     {{-- ── Grafik Pendapatan ── --}}
-    <div style="margin-top:32px;">
-        <h2 style="font-size:20px;font-weight:700;color:var(--text);margin:0 0 18px;">
+    <div class="mt-8">
+        <h2 class="mb-[18px] text-xl font-bold text-[var(--admin-text)]">
             Grafik Pendapatan {{ $tahun }}
         </h2>
 
-        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:20px;">
+        <div class="grid grid-cols-1 gap-5 xl:grid-cols-2">
 
             {{-- Chart 1: Tren Pendapatan Bulanan --}}
-            <div class="adm-card" style="padding:24px;">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-                    <h3 style="font-size:15px;font-weight:600;color:var(--text);margin:0;">
+            <div class="adm-card p-5 sm:p-6">
+                <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <h3 class="text-[15px] font-semibold text-[var(--admin-text)]">
                         Tren Pendapatan Bulanan
                     </h3>
                     <span
@@ -374,9 +373,9 @@
             </div>
 
             {{-- Chart 2: Pendapatan per Paket --}}
-            <div class="adm-card" style="padding:24px;">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-                    <h3 style="font-size:15px;font-weight:600;color:var(--text);margin:0;">
+            <div class="adm-card p-5 sm:p-6">
+                <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <h3 class="text-[15px] font-semibold text-[var(--admin-text)]">
                         Pendapatan per Paket
                     </h3>
                     @if (count($chartPaketLabel) > 0)
@@ -407,6 +406,7 @@
 @endsection
 
 @push('scripts')
+    @vite('resources/js/admin-dashboard.js')
     <script>
         document.addEventListener("DOMContentLoaded", function() {
 

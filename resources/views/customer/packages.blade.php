@@ -20,8 +20,8 @@
         </form>
     </section>
 
-    <main class="mx-auto max-w-[1280px] px-6 py-14 lg:px-16">
-        <h1 class="mb-8 text-[44px] font-extrabold leading-tight text-[#202638] dark:text-white">
+    <main class="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-14 lg:px-16">
+        <h1 class="mb-8 text-3xl font-extrabold leading-tight text-[#202638] dark:text-white sm:text-[44px]">
             {{ ($query ?? '') !== '' ? 'Hasil Pencarian' : 'Semua Paket' }}
         </h1>
 
@@ -41,7 +41,7 @@
             <div class="rounded-3xl border border-[var(--border)] bg-[var(--bg-card)] px-6 py-16 text-center">
                 <h2 class="text-2xl font-extrabold t">Tidak Ada Paket Ditemukan</h2>
                 <p class="tm mt-2">Coba gunakan kata kunci lain atau lihat semua paket yang tersedia.</p>
-                <a href="{{ route('packages') }}" class="btn btn-gold mt-6">Lihat Semua Paket</a>
+                <a href="{{ route('packages') }}" class="btn btn-gold mt-6 w-full sm:w-auto">Lihat Semua Paket</a>
             </div>
         @endif
     </main>

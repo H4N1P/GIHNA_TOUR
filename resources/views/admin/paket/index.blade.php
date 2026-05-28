@@ -223,12 +223,12 @@
         }
     </style>
     {{-- Heading & Tombol Tambah --}}
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px;">
+    <div class="mb-[22px] flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
             <h1 style="font-size:24px;font-weight:700;color:var(--text);margin:0;">Kelola Paket Tour</h1>
             <p style="font-size:13px;color:var(--text-muted);margin:4px 0 0;">Kelola semua paket tour yang tersedia</p>
         </div>
-        <a href="{{ route('admin.paket.create') }}" class="btn-orange">
+        <a href="{{ route('admin.paket.create') }}" class="btn-orange min-h-11 w-full justify-center sm:w-auto">
             <svg style="width:15px;height:15px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
             </svg>
@@ -353,9 +353,9 @@
 
                             {{-- Rundown --}}
                             <td>
-                                @if ($paket->rundown)
-                                    <p style="font-size:12px;color:var(--text-muted);max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="{{ $paket->rundown }}">
-                                        {{ Str::limit($paket->rundown, 60) }}
+                                @if ($paket->rundowns->count() > 0)
+                                    <p style="font-size:12px;color:var(--text-muted);max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="{{ $paket->rundowns->pluck('acara')->join(', ') }}">
+                                        {{ $paket->rundowns->count() }} Rundown
                                     </p>
                                 @else
                                     <span style="font-size:12px;color:var(--text-muted);">—</span>

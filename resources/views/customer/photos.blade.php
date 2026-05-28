@@ -55,7 +55,7 @@
 
 @section('content')
     <!-- MAIN -->
-    <main class="mx-auto max-w-[1280px] px-14 py-10 mt-[72px]">
+    <main class="mx-auto mt-[72px] max-w-7xl px-4 py-10 sm:px-6 lg:px-14">
         <div class="mb-8 text-center">
             <h1 class="text-[30px] font-bold t">Semua Galeri</h1>
             <p class="tm mt-1">Dokumentasi perjalanan wisata bersama Ghina Tour Travel</p>
@@ -63,13 +63,13 @@
 
         @if ($fotos->count() > 0)
             <!-- Grid 6 kolom -->
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
+            <div class="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
                 @foreach ($fotos as $index => $foto)
                     @php
                         $mediaSrc = $foto->path ? (Str::startsWith($foto->path, 'http') ? $foto->path : asset('storage/' . $foto->path)) : '';
                         $isVideo = $foto->type === 'video';
                     @endphp
-                    <div class="foto-item relative group"
+                    <div class="foto-item relative min-h-11 group"
                         onclick="openLightbox('{{ $mediaSrc }}', '{{ $foto->paket->nama_paket ?? 'Galeri' }}', {{ $isVideo ? 'true' : 'false' }})">
                         @if ($isVideo && $foto->path)
                             <video class="w-full h-full object-cover" muted preload="metadata">
@@ -80,7 +80,7 @@
                             </div>
                         @elseif ($foto->path)
                             <img src="{{ $mediaSrc }}" alt="{{ $foto->paket->nama_paket ?? 'Galeri' }}"
-                                class="w-full h-full object-cover" />
+                                class="h-full w-full max-w-full object-cover" loading="lazy" />
                         @else
                             <div class="w-full h-full flex items-center justify-center"
                                 style="background:var(--bg-section);color:#9ca3af;">
@@ -133,7 +133,7 @@
                 </div>
                 <h3 class="text-xl font-bold t mb-2">Tidak Ada Foto</h3>
                 <p class="tm mb-6">Galeri foto akan segera ditambahkan.</p>
-                <a href="{{ route('home') }}" class="btn btn-gold">Kembali ke Beranda</a>
+                <a href="{{ route('home') }}" class="btn btn-gold w-full sm:w-auto">Kembali ke Beranda</a>
             </div>
         @endif
     </main>

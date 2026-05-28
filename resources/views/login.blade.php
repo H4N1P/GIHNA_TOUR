@@ -1,351 +1,77 @@
-<!DOCTYPE html>
-<html lang="id">
+@extends('components.layout.auth')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login – Ghina Tour Travel</title>
-    @vite(['resources/css/admin.css'])
-    <style>
-        *,
-        *::before,
-        *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+@section('title', 'Admin Login')
+@section('card_title', 'Admin Login')
 
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: #F5F0E8;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem 1rem;
-        }
+@section('content')
+    <form method="POST" action="{{ route('login') }}" class="space-y-5">
+        @csrf
 
-        .card {
-            background: #ffffff;
-            border-radius: 20px;
-            padding: 2.5rem 2.5rem 2rem;
-            width: 100%;
-            max-width: 440px;
-            box-shadow: 0 4px 32px rgba(61, 32, 8, 0.10);
-            border: 1px solid #e8dfc8;
-        }
-
-        /* Brand */
-        .brand {
-            text-align: center;
-            font-size: 22px;
-            font-weight: 800;
-            color: #3D2008;
-            margin-bottom: 1.5rem;
-            letter-spacing: -0.5px;
-        }
-
-        .brand span {
-            color: #B8952A;
-        }
-
-        /* Icon */
-        .icon-wrap {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1rem;
-        }
-
-        .card-title {
-            text-align: center;
-            font-size: 18px;
-            font-weight: 700;
-            color: #3D2008;
-            margin-bottom: 1.75rem;
-        }
-
-        /* Alert error */
-        .alert-error {
-            background: #fff3f3;
-            border: 1px solid #f5c6c6;
-            border-radius: 10px;
-            padding: 0.75rem 1rem;
-            margin-bottom: 1.25rem;
-            font-size: 13px;
-            color: #b91c1c;
-        }
-
-        .alert-error ul {
-            padding-left: 1rem;
-        }
-
-        /* Field */
-        .field {
-            margin-bottom: 1.1rem;
-        }
-
-        .label-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 6px;
-        }
-
-        label {
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            color: #8a7050;
-            text-transform: uppercase;
-        }
-
-        .forgot-link {
-            font-size: 12px;
-            font-weight: 600;
-            color: #B8952A;
-            text-decoration: none;
-        }
-
-        .forgot-link:hover {
-            color: #8a6e1a;
-        }
-
-        .input-wrap {
-            display: flex;
-            align-items: center;
-            background: #FBF5E6;
-            border: 1.5px solid #e8dfc8;
-            border-radius: 50px;
-            padding: 0 16px;
-            height: 50px;
-            gap: 10px;
-            transition: border-color 0.2s;
-        }
-
-        .input-wrap:focus-within {
-            border-color: #B8952A;
-        }
-
-        .input-wrap.is-invalid {
-            border-color: #dc2626;
-        }
-
-        .input-wrap svg {
-            width: 18px;
-            height: 18px;
-            flex-shrink: 0;
-            stroke: #B8952A;
-        }
-
-        .input-wrap input {
-            flex: 1;
-            border: none;
-            background: transparent;
-            font-size: 14px;
-            color: #3D2008;
-            outline: none;
-            font-family: inherit;
-        }
-
-        .input-wrap input::placeholder {
-            color: #c4a97a;
-        }
-
-        .btn-eye {
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 0;
-            display: flex;
-            align-items: center;
-        }
-
-        .btn-eye svg {
-            width: 18px;
-            height: 18px;
-            stroke: #B8952A;
-        }
-
-        .field-error {
-            font-size: 12px;
-            color: #dc2626;
-            margin-top: 5px;
-            padding-left: 14px;
-        }
-
-        /* Submit */
-        .btn-submit {
-            width: 100%;
-            height: 52px;
-            border: none;
-            border-radius: 50px;
-            background: #B8952A;
-            color: #ffffff;
-            font-size: 14px;
-            font-weight: 700;
-            letter-spacing: 1.5px;
-            cursor: pointer;
-            margin-top: 1.25rem;
-            transition: background 0.18s, transform 0.1s;
-            font-family: inherit;
-        }
-
-        .btn-submit:hover {
-            background: #8a6e1a;
-        }
-
-        .btn-submit:active {
-            transform: scale(0.98);
-            background: #6b5413;
-        }
-
-        .divider {
-            height: 1px;
-            background: #e8dfc8;
-            margin: 1.5rem 0 0;
-        }
-
-        /* Back link */
-        .back-link {
-            margin-top: 1.4rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            font-size: 13px;
-            color: #8a7050;
-            text-decoration: none;
-            transition: color 0.15s;
-        }
-
-        .back-link:hover {
-            color: #3D2008;
-        }
-
-        .back-link svg {
-            width: 14px;
-            height: 14px;
-            stroke: currentColor;
-        }
-    </style>
-</head>
-
-<body>
-
-    <div class="card">
-
-        {{-- Brand --}}
-        <div class="brand"><span>Ghina</span> Tour Travel</div>
-
-        {{-- Logo icon --}}
-        <div class="icon-wrap">
-            <img src="{{ asset('customer/assets/images/logos/logo.png') }}"
-                style="width:100px;height:100px;object-fit:contain;" alt="Logo">
+        <div>
+            <label for="email" class="mb-2 block text-[11px] font-bold uppercase tracking-[1px] text-[#8a7050]">Email</label>
+            <div class="flex min-h-[50px] items-center gap-3 rounded-full border-[1.5px] {{ $errors->has('email') ? 'border-red-600' : 'border-[#e8dfc8]' }} bg-[#FBF5E6] px-4 focus-within:border-[#B8952A]">
+                <svg class="h-[18px] w-[18px] shrink-0 stroke-[#B8952A]" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                </svg>
+                <input type="email" id="email" name="email" value="{{ old('email') }}" placeholder="Masukkan Email" autocomplete="email" autofocus class="min-w-0 flex-1 bg-transparent text-sm text-[#3D2008] outline-none placeholder:text-[#c4a97a]">
+            </div>
+            @error('email')
+                <p class="mt-1 pl-4 text-xs text-red-600">{{ $message }}</p>
+            @enderror
         </div>
 
-        <div class="card-title">Admin Login</div>
-
-        {{-- Validation errors --}}
-        @if ($errors->any())
-            <div class="alert-error">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
+        <div>
+            <div class="mb-2 flex items-center justify-between gap-3">
+                <label for="password" class="block text-[11px] font-bold uppercase tracking-[1px] text-[#8a7050]">Password</label>
+                <a href="{{ route('password.request') }}" class="inline-flex min-h-11 items-center text-xs font-semibold text-[#B8952A] hover:text-[#8a6e1a]">Forgot Password?</a>
             </div>
-        @endif
-
-        {{-- Session error (wrong credentials) --}}
-        @if (session('error'))
-            <div class="alert-error">{{ session('error') }}</div>
-        @endif
-
-        {{-- Session status (password reset success) --}}
-        @if (session('status'))
-            <div class="alert-success"
-                style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 0.75rem 1rem; margin-bottom: 1.25rem; font-size: 13px; color: #166534;">
-                {{ session('status') }}
-            </div>
-        @endif
-
-        <form method="POST" action="{{ route('login') }}">
-            @csrf
-
-            {{-- Email --}}
-            <div class="field">
-                <label for="email">EMAIL</label>
-                <div class="input-wrap {{ $errors->has('email') ? 'is-invalid' : '' }}">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                        <circle cx="12" cy="7" r="4" />
+            <div class="flex min-h-[50px] items-center gap-3 rounded-full border-[1.5px] {{ $errors->has('password') ? 'border-red-600' : 'border-[#e8dfc8]' }} bg-[#FBF5E6] px-4 focus-within:border-[#B8952A]">
+                <svg class="h-[18px] w-[18px] shrink-0 stroke-[#B8952A]" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                </svg>
+                <input type="password" id="password" name="password" placeholder="Password" autocomplete="current-password" class="min-w-0 flex-1 bg-transparent text-sm text-[#3D2008] outline-none placeholder:text-[#c4a97a]">
+                <button type="button" class="flex min-h-11 min-w-11 items-center justify-center" onclick="togglePassword(this)" title="Tampilkan password">
+                    <svg class="h-[18px] w-[18px] stroke-[#B8952A]" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                        <circle cx="12" cy="12" r="3" />
                     </svg>
-                    <input type="email" id="email" name="email" value="{{ old('email') }}"
-                        placeholder="Masukkan Email" autocomplete="email" autofocus>
-                </div>
-                @error('email')
-                    <div class="field-error">{{ $message }}</div>
-                @enderror
+                </button>
             </div>
+            @error('password')
+                <p class="mt-1 pl-4 text-xs text-red-600">{{ $message }}</p>
+            @enderror
+        </div>
 
-            {{-- Password --}}
-            <div class="field">
-                <div class="label-row">
-                    <label for="password">PASSWORD</label>
-                    <a href="{{ route('password.request') }}" class="forgot-link">Forgot Password?</a>
-                </div>
-                <div class="input-wrap {{ $errors->has('password') ? 'is-invalid' : '' }}">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                    </svg>
-                    <input type="password" id="password" name="password" placeholder="••••••••"
-                        autocomplete="current-password">
-                    <button type="button" class="btn-eye" onclick="togglePassword()" title="Tampilkan password">
-                        <svg id="eye-icon" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"
-                            stroke-linejoin="round">
-                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                            <circle cx="12" cy="12" r="3" />
-                        </svg>
-                    </button>
-                </div>
-                @error('password')
-                    <div class="field-error">{{ $message }}</div>
-                @enderror
-            </div>
+        <flux:button type="submit" class="mt-5 h-[52px] w-full rounded-full bg-[#B8952A]! text-sm font-bold tracking-[1.5px] text-white! hover:bg-[#8a6e1a]!">
+            SIGN IN
+        </flux:button>
 
-            <button type="submit" class="btn-submit">SIGN IN</button>
+        <div class="h-px bg-[#e8dfc8]"></div>
+    </form>
+@endsection
 
-            <div class="divider"></div>
-        </form>
-
-    </div>
-
-    {{-- Back to website --}}
-    <a href="{{ url('/') }}" class="back-link">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+@section('back_link')
+    <a href="{{ url('/') }}" class="mt-5 inline-flex min-h-11 items-center justify-center gap-2 text-sm text-[#8a7050] hover:text-[#3D2008]">
+        <svg class="h-4 w-4 stroke-current" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="19" y1="12" x2="5" y2="12" />
             <polyline points="12 19 5 12 12 5" />
         </svg>
         Kembali ke Website
     </a>
+@endsection
 
+@section('scripts')
     <script>
-        function togglePassword() {
-            var input = document.getElementById('password');
-            var icon = document.getElementById('eye-icon');
-            var isHidden = input.type === 'password';
+        function togglePassword(btn) {
+            const input = btn.parentElement.querySelector('input');
+            const icon = btn.querySelector('svg');
+            const isHidden = input.type === 'password';
             input.type = isHidden ? 'text' : 'password';
-            icon.innerHTML = isHidden ?
-                '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>' :
-                '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+            icon.innerHTML = isHidden
+                ? '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>'
+                : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
         }
     </script>
-
-</body>
-
-</html>
+@endsection

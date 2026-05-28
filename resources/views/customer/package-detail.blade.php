@@ -75,10 +75,10 @@
 
 @section('content')
     <!-- HERO / HEADER PAKET -->
-    <div class="detail-hero relative h-[380px] lg:h-[420px] w-full overflow-hidden mt-[72px]">
+    <div class="detail-hero relative mt-[72px] h-[320px] w-full overflow-hidden sm:h-[380px] lg:h-[420px]">
         @if ($paket->image)
             <img src="{{ Str::startsWith($paket->image, 'http') ? $paket->image : asset('storage/' . $paket->image) }}"
-                alt="{{ $paket->nama_paket }}" class="absolute inset-0 w-full h-full object-cover" />
+                alt="{{ $paket->nama_paket }}" class="absolute inset-0 h-full w-full max-w-full object-cover" />
             <div class="absolute inset-0" style="background:rgba(0,0,0,.45);"></div>
         @else
             <div class="placeholder-icon absolute inset-0">
@@ -90,7 +90,7 @@
             <div class="absolute inset-0" style="background:rgba(255,255,255,.35);"></div>
         @endif
         <div class="absolute inset-0 flex items-center justify-center flex-col gap-2 px-4 text-center">
-            <h1 class="text-[38px] font-bold {{ $paket->image ? 'text-white' : 't' }}">
+            <h1 class="text-3xl font-bold sm:text-[38px] {{ $paket->image ? 'text-white' : 't' }}">
                 {{ $paket->nama_paket }}
             </h1>
             <p class="{{ $paket->image ? 'text-gray-200' : 'tm' }} text-base">Paket Wisata</p>
@@ -98,13 +98,13 @@
     </div>
 
     <!-- MAIN CONTENT -->
-    <main class="mx-auto max-w-[1280px] px-6 lg:px-14 py-10">
+    <main class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-14">
 
         <!-- Destinasi Wisata Images -->
         @if ($paket->destinasis && $paket->destinasis->count() > 0)
             <div class="mb-10">
                 <h2 class="text-[22px] font-bold t mb-4">Destinasi Wisata</h2>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
                     @foreach ($paket->destinasis as $tempat)
                         @php
                             $destSrc = $tempat->image
@@ -115,7 +115,7 @@
                             @if($destSrc) onclick="openLightbox('{{ $destSrc }}', '{{ $tempat->nama_destinasi }}')" @endif>
                             @if ($tempat->image)
                                 <img src="{{ $destSrc }}"
-                                    alt="{{ $tempat->nama_destinasi }}" class="absolute inset-0 w-full h-full object-cover" />
+                                    alt="{{ $tempat->nama_destinasi }}" class="absolute inset-0 h-full w-full max-w-full object-cover" loading="lazy" />
                                 <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all"></div>
                             @else
                                 <div class="placeholder-icon">
@@ -171,10 +171,10 @@
         @endauth
 
         <!-- Fasilitas + Harga -->
-        <div class="flex gap-8 flex-col lg:flex-row">
+        <div class="flex flex-col gap-8 lg:flex-row">
 
             <!-- Fasilitas -->
-            <div class="fas-box flex-1 rounded-2xl p-7">
+            <div class="fas-box flex-1 rounded-2xl p-5 sm:p-7">
                 <h2 class="text-[22px] font-bold t mb-5">Fasilitas</h2>
 
                 @php
@@ -193,7 +193,9 @@
                         @forelse ($transportasis as $transportasi)
                             <div class="fas-item flex items-center gap-2">
                                 @if($transportasi->image)
-                                    <img src="{{ asset('storage/' . $transportasi->image) }}" class="w-5 h-5 rounded object-cover flex-shrink-0 cursor-pointer hover:ring-2 hover:ring-amber-400 transition-all" onclick="openLightbox('{{ asset('storage/' . $transportasi->image) }}', '{{ $transportasi->nama_fasilitas }}')" />
+                                    <button type="button" class="flex min-h-11 min-w-11 items-center justify-center rounded hover:ring-2 hover:ring-amber-400" onclick="openLightbox('{{ asset('storage/' . $transportasi->image) }}', '{{ $transportasi->nama_fasilitas }}')">
+                                        <img src="{{ asset('storage/' . $transportasi->image) }}" class="h-5 w-5 max-w-full rounded object-cover" alt="{{ $transportasi->nama_fasilitas }}" loading="lazy" />
+                                    </button>
                                 @else
                                     <span class="tm text-sm">–</span>
                                 @endif
@@ -212,7 +214,9 @@
                         @forelse ($akomodasis as $akomodasi)
                             <div class="fas-item flex items-center gap-2">
                                 @if($akomodasi->image)
-                                    <img src="{{ asset('storage/' . $akomodasi->image) }}" class="w-5 h-5 rounded object-cover flex-shrink-0 cursor-pointer hover:ring-2 hover:ring-amber-400 transition-all" onclick="openLightbox('{{ asset('storage/' . $akomodasi->image) }}', '{{ $akomodasi->nama_fasilitas }}')" />
+                                    <button type="button" class="flex min-h-11 min-w-11 items-center justify-center rounded hover:ring-2 hover:ring-amber-400" onclick="openLightbox('{{ asset('storage/' . $akomodasi->image) }}', '{{ $akomodasi->nama_fasilitas }}')">
+                                        <img src="{{ asset('storage/' . $akomodasi->image) }}" class="h-5 w-5 max-w-full rounded object-cover" alt="{{ $akomodasi->nama_fasilitas }}" loading="lazy" />
+                                    </button>
                                 @else
                                     <span class="tm text-sm">–</span>
                                 @endif
@@ -231,7 +235,9 @@
                         @forelse ($konsumsis as $konsumsi)
                             <div class="fas-item flex items-center gap-2">
                                 @if($konsumsi->image)
-                                    <img src="{{ asset('storage/' . $konsumsi->image) }}" class="w-5 h-5 rounded object-cover flex-shrink-0 cursor-pointer hover:ring-2 hover:ring-amber-400 transition-all" onclick="openLightbox('{{ asset('storage/' . $konsumsi->image) }}', '{{ $konsumsi->nama_fasilitas }}')" />
+                                    <button type="button" class="flex min-h-11 min-w-11 items-center justify-center rounded hover:ring-2 hover:ring-amber-400" onclick="openLightbox('{{ asset('storage/' . $konsumsi->image) }}', '{{ $konsumsi->nama_fasilitas }}')">
+                                        <img src="{{ asset('storage/' . $konsumsi->image) }}" class="h-5 w-5 max-w-full rounded object-cover" alt="{{ $konsumsi->nama_fasilitas }}" loading="lazy" />
+                                    </button>
                                 @else
                                     <span class="tm text-sm">–</span>
                                 @endif

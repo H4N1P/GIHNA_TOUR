@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
         title.textContent = titleText;
         message.textContent = messageText;
         confirm.textContent = confirmText;
+        confirm.disabled = false;
         cancel.hidden = !showCancel;
         confirm.hidden = !form && type === 'success';
         icon.className = `admin-modal__icon admin-modal__icon--${type}`;
@@ -28,7 +29,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function closeModal() {
         modal.classList.remove('is-open');
         modal.setAttribute('aria-hidden', 'true');
+        pendingForm?.classList.remove('is-confirm-pending');
         pendingForm = null;
+        confirm.disabled = false;
     }
 
     document.querySelectorAll('[data-admin-flash]').forEach((flash) => {
@@ -44,6 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const form = event.target.closest('form[data-confirm]');
         if (!form || form.dataset.confirmed === 'true') return;
         event.preventDefault();
+        form.classList.add('is-confirm-pending');
 
         openModal({
             type: 'danger',
@@ -60,6 +64,8 @@ document.addEventListener('DOMContentLoaded', () => {
             closeModal();
             return;
         }
+        confirm.disabled = true;
+        confirm.textContent = 'Memproses...';
         pendingForm.dataset.confirmed = 'true';
         pendingForm.submit();
     });

@@ -3,13 +3,22 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Admin Panel') - Ghina Tour Travel</title>
-    @vite(['resources/css/app.css', 'resources/css/admin.css', 'resources/css/chatbot.css', 'resources/js/app.js'])
+    <script>
+        (function() {
+            const isDark = localStorage.getItem('theme') === 'dark';
+            document.documentElement.classList.toggle('dark', isDark);
+            document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+        })();
+    </script>
+    @vite(['resources/css/app.css', 'resources/css/admin.css', 'resources/js/app.js'])
+    @fluxAppearance
+    @stack('head')
 </head>
 
-<body class="h-full">
+<body class="h-full overflow-x-hidden">
     <div class="admin-shell">
         <aside id="sidebar" class="admin-sidebar">
             <div class="admin-brand">
@@ -55,18 +64,24 @@
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
                 </button>
 
-                <div class="ml-auto flex items-center gap-5">
+                <div class="ml-auto flex min-w-0 items-center gap-2 sm:gap-5">
                     <label class="tgl" title="Ganti tema">
                         <input type="checkbox" id="adminThemeToggle" />
                         <span class="sl">
-                            <span style="font-size:11px;z-index:1;">☀️</span>
-                            <span style="font-size:11px;z-index:1;">🌙</span>
+                            <svg class="tgl__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                aria-hidden="true">
+                                <circle cx="12" cy="12" r="4" />
+                                <path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+                            </svg>
+                            <svg class="tgl__icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                <path d="M21 14.2A8.5 8.5 0 0 1 9.8 3a7 7 0 1 0 11.2 11.2Z" />
+                            </svg>
                         </span>
                     </label>
 
                     <div class="relative">
-                        <button type="button" onclick="toggleLogoutMenu()" class="admin-profile">
-                            <span>{{ auth()->user()->name ?? 'Admin Ghina' }}</span>
+                        <button type="button" onclick="toggleLogoutMenu()" class="admin-profile min-h-11 min-w-11">
+                            <span class="hidden max-w-[140px] truncate sm:inline">{{ auth()->user()->name ?? 'Admin Ghina' }}</span>
                             <img src="{{ asset('customer/assets/images/logos/logo.png') }}" alt="Admin">
                         </button>
 
@@ -101,12 +116,6 @@
             </main>
         </div>
     </div>
-
-    <x-chatbot-widget
-        mode="admin"
-        :menu-url="route('chatbot.menu')"
-        :message-url="route('chatbot.message')"
-    />
 
     <x-admin-modal />
 
@@ -156,6 +165,8 @@
     </script>
 
     @stack('scripts')
+    @livewireScripts
+    @fluxScripts
 </body>
 
 </html>

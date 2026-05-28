@@ -3,19 +3,21 @@
 @section('title', 'Ghina Tour Travel - Serving With Love')
 
 @section('content')
-    <section id="beranda" class="relative h-[660px] w-full overflow-hidden">
+    <section id="beranda" class="relative min-h-[560px] w-full overflow-hidden sm:min-h-[620px] lg:min-h-[660px]">
         <div class="absolute inset-0 z-10" style="background:var(--hero-overlay);"></div>
-        <video autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover z-0" poster="{{ asset('customer/assets/images/backgrounds/bg-hero.jpg') }}">
+        <video autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover z-0"
+            poster="{{ asset('customer/assets/images/backgrounds/bg-hero.jpg') }}">
             <source src="{{ asset('customer/assets/videos/hero-video.mp4') }}" type="video/mp4">
-            <div class="absolute inset-0 bg-cover bg-center" style="background-image:url('{{ asset('customer/assets/images/backgrounds/bg-hero.jpg') }}');"></div>
+            <div class="absolute inset-0 bg-cover bg-center"
+                style="background-image:url('{{ asset('customer/assets/images/backgrounds/bg-hero.jpg') }}');"></div>
         </video>
 
-        <div class="relative z-20 mx-auto grid h-full max-w-[1280px] items-center px-6 pt-20 lg:px-14">
+        <div class="relative z-20 mx-auto grid min-h-[560px] max-w-7xl items-center px-4 pt-24 sm:min-h-[620px] sm:px-6 lg:min-h-[660px] lg:px-14">
             <div class="fade-in">
-                <h1 class="max-w-[820px] text-[42px] font-extrabold leading-tight text-white lg:text-[58px]">
+                <h1 class="max-w-[820px] text-4xl font-extrabold leading-tight text-white sm:text-[42px] lg:text-[58px]">
                     Temukan Pengalaman Wisata Terbaik Bersama Kami
                 </h1>
-                <p class="mt-5 max-w-[620px] text-[17px] leading-8 text-gray-200">
+                <p class="mt-5 max-w-[620px] text-base leading-7 text-gray-200 sm:text-[17px] sm:leading-8">
                     Jelajahi berbagai destinasi menarik dengan paket open trip yang mudah, terjangkau, dan menyenangkan.
                 </p>
                 <form action="{{ route('packages') }}" method="GET" class="hero-search mt-9">
@@ -26,8 +28,8 @@
         </div>
     </section>
 
-    <div class="relative z-20 mx-auto -mt-16 max-w-[1280px] px-6 lg:px-14">
-        <div class="stats-bar grid grid-cols-2 gap-6 px-8 py-6 lg:grid-cols-4 lg:gap-0 lg:px-12">
+    <div class="relative z-20 mx-auto -mt-16 max-w-7xl px-4 sm:px-6 lg:px-14">
+        <div class="stats-bar grid grid-cols-1 gap-5 px-5 py-6 sm:grid-cols-2 sm:px-8 lg:grid-cols-4 lg:gap-0 lg:px-12">
             <div class="flex items-center gap-4 lg:border-r lg:border-[var(--border)]">
                 <div class="flex h-[58px] w-[58px] items-center justify-center rounded-full bg-[var(--gold)] text-black">
                     <svg class="h-7 w-7" fill="currentColor" viewBox="0 0 24 24">
@@ -78,10 +80,10 @@
     </div>
 
     <section id="tentang" class="sec-bg pt-20 pb-20">
-        <div class="mx-auto grid max-w-[1280px] gap-14 px-6 lg:grid-cols-[1.1fr_.9fr] lg:px-14">
+        <div class="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-[1.1fr_.9fr] lg:gap-14 lg:px-14">
             <div class="fade-in">
                 <span class="text-xs font-extrabold uppercase tracking-wider text-[var(--orange)]">Tentang Kami</span>
-                <h2 class="mt-2 max-w-[560px] text-[30px] font-extrabold leading-tight t">
+                <h2 class="mt-2 max-w-[560px] text-3xl font-extrabold leading-tight t">
                     Biro Perjalanan Wisata Terpercaya Dari Purwokerto
                 </h2>
                 <p class="tm mt-7 max-w-[620px] text-[16px] leading-8">
@@ -94,7 +96,7 @@
                         Travel</strong>:
                     <strong class="text-[var(--gold-dark)]">Terpercaya, Fleksibel & Fun.</strong>
                 </p>
-                <div class="visi-card mt-6 max-w-[520px] rounded-2xl p-6">
+                <div class="visi-card mt-6 max-w-[520px] rounded-2xl p-5 sm:p-6">
                     <div class="flex gap-4">
                         <span
                             class="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--gold)] font-extrabold text-black">V</span>
@@ -117,7 +119,7 @@
             </div>
 
             <div class="fade-in space-y-6 lg:pt-12">
-                <div class="svc-card flex items-center gap-5 rounded-2xl p-6">
+                <div class="svc-card flex flex-col gap-4 rounded-2xl p-5 sm:flex-row sm:items-center sm:gap-5 sm:p-6">
                     <span
                         class="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-[var(--gold)] text-black">
                         <svg class="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
@@ -130,7 +132,7 @@
                         <p class="tm mt-1 text-lg">Wisata domestik & mancanegara untuk rombongan</p>
                     </div>
                 </div>
-                <div class="svc-card flex items-center gap-5 rounded-2xl p-6">
+                <div class="svc-card flex flex-col gap-4 rounded-2xl p-5 sm:flex-row sm:items-center sm:gap-5 sm:p-6">
                     <span
                         class="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-[var(--gold)] text-black">
                         <svg class="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
@@ -152,13 +154,13 @@
     </section>
 
     <section id="paket" class="bg-[#f8fafc] py-20 dark:bg-[var(--bg)]">
-        <div class="mx-auto max-w-[1280px] px-6 lg:px-14">
-            <div class="mb-8 flex items-end justify-between gap-6">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-14">
+            <div class="mb-8 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end sm:gap-6">
                 <div>
-                    <h2 class="text-[32px] font-extrabold t">Paket</h2>
+                    <h2 class="text-3xl font-extrabold t sm:text-[32px]">Paket</h2>
                     <p class="tm mt-1 text-lg">Wujudkan Destinasi Tempat Impianmu</p>
                 </div>
-                <a href="{{ route('packages') }}" class="btn btn-gold">Lihat Semua Paket</a>
+                <a href="{{ route('packages') }}" class="btn btn-gold w-full sm:w-auto">Lihat Semua Paket</a>
             </div>
 
             <div class="paket-slider">
@@ -214,8 +216,8 @@
     </section>
 
     <section id="galeri" class="sec-bg py-20">
-        <div class="mx-auto max-w-[1040px] px-6 text-center lg:px-14">
-            <h2 class="text-[32px] font-extrabold t">Galeri</h2>
+        <div class="mx-auto max-w-5xl px-4 text-center sm:px-6 lg:px-14">
+            <h2 class="text-3xl font-extrabold t sm:text-[32px]">Galeri</h2>
             <div class="mt-12 grid grid-cols-2 gap-4 md:grid-cols-4">
                 @forelse($fotos as $index => $foto)
                     @php
@@ -225,26 +227,27 @@
                                 : asset('storage/' . $foto->path))
                             : null;
                         $isVideo = $foto->type === 'video';
-                        
-                        // Pola Grid Figma (2 Baris, 4 Slot/Baris):
-                        // Baris 1: 1 foto (span 2) kiri, 2 foto (span 1) kanan -> index 0, 1, 2
-                        // Baris 2: dibalik, 2 foto (span 1) kiri, 1 foto (span 2) kanan -> index 3, 4, 5
+
                         $span = in_array($index % 6, [0, 5]) ? 'md:col-span-2' : 'md:col-span-1';
                     @endphp
-                    <div class="galeri-item {{ $span }} h-[180px] rounded-lg p-3 md:h-[210px] cursor-pointer relative group"
+                    <div class="galeri-item {{ $span }} relative h-[160px] cursor-pointer rounded-lg p-2 sm:h-[180px] sm:p-3 md:h-[210px] group"
                         style="background:var(--bg-section);border:1px solid var(--border);"
                         onclick="openLightbox('{{ $src }}', '{{ $foto->keterangan ?? 'Galeri' }}', {{ $isVideo ? 'true' : 'false' }})">
                         @if ($src && $isVideo)
                             <video class="h-full w-full rounded-md object-cover" muted preload="metadata">
                                 <source src="{{ $src }}" type="video/mp4">
                             </video>
-                            <div class="absolute inset-3 flex items-center justify-center rounded-md bg-black/20 group-hover:bg-black/40 transition-all">
-                                <svg class="w-12 h-12 text-white/80" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                            <div
+                                class="absolute inset-3 flex items-center justify-center rounded-md bg-black/20 group-hover:bg-black/40 transition-all">
+                                <svg class="w-12 h-12 text-white/80" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M8 5v14l11-7z" />
+                                </svg>
                             </div>
                         @elseif ($src)
                             <img class="h-full w-full rounded-md object-cover" src="{{ $src }}"
                                 alt="{{ $foto->keterangan ?? 'Galeri' }}" loading="lazy">
-                            <div class="absolute inset-3 rounded-md bg-black/0 group-hover:bg-black/25 transition-all"></div>
+                            <div class="absolute inset-3 rounded-md bg-black/0 group-hover:bg-black/25 transition-all">
+                            </div>
                         @else
                             <div class="flex h-full w-full items-center justify-center rounded-md"
                                 style="background:var(--bg-section);color:#9ca3af;">

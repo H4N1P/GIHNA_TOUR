@@ -3,17 +3,19 @@
   const themeToggle = document.getElementById('themeToggle');
   const html = document.documentElement;
 
-  themeToggle?.addEventListener('change', () => {
-    html.setAttribute('data-theme', themeToggle.checked ? 'dark' : 'light');
-    localStorage.setItem('theme', themeToggle.checked ? 'dark' : 'light');
-  });
-
-  // Load saved theme
-  const savedTheme = localStorage.getItem('theme');
-  if (savedTheme) {
-    html.setAttribute('data-theme', savedTheme);
-    if (themeToggle) themeToggle.checked = savedTheme === 'dark';
+  function applyTheme(isDark) {
+    html.classList.toggle('dark', isDark);
+    html.setAttribute('data-theme', isDark ? 'dark' : 'light');
+    if (themeToggle) themeToggle.checked = isDark;
   }
+
+  applyTheme(localStorage.getItem('theme') === 'dark');
+
+  themeToggle?.addEventListener('change', () => {
+    const isDark = themeToggle.checked;
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    applyTheme(isDark);
+  });
 
   // Fade-in animation on scroll
   const observer = new IntersectionObserver((entries) => {

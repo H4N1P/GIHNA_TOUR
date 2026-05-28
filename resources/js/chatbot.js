@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const csrfToken = document.querySelector(
         'meta[name="csrf-token"]',
     )?.content;
+    const botLogo = "/customer/assets/images/logos/logo.png";
 
     trigger.addEventListener("click", () => {
         container.classList.toggle("active");
@@ -22,9 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    closeBtn?.addEventListener("click", () =>
-        container.classList.remove("active"),
-    );
+    closeBtn?.addEventListener("click", () => closeChatbot());
 
     form.addEventListener("submit", (event) => {
         event.preventDefault();
@@ -80,9 +79,20 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function appendMessage(text, side, options = []) {
-        const message = document.createElement("div");
-        message.className = `message message-${side}`;
-        message.innerHTML = `<div>${formatMessage(text)}</div>`;
+        const row = document.createElement("div");
+        row.className = `message-row message-row-${side}`;
+
+        if (side === "bot") {
+            row.innerHTML = `
+                <img class="message-avatar" src="${botLogo}" alt="" loading="lazy">
+                <div class="message-stack">
+                    <span class="message-author">GhinaTour</span>
+                    <div class="message message-bot"><div>${formatMessage(text)}</div></div>
+                </div>
+            `;
+        } else {
+            row.innerHTML = `<div class="message message-user"><div>${formatMessage(text)}</div></div>`;
+        }
 
         if (options.length > 0) {
             const replies = document.createElement("div");
@@ -105,10 +115,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
                 replies.appendChild(button);
             });
-            message.appendChild(replies);
+            (row.querySelector(".message-stack") || row).appendChild(replies);
         }
 
-        messages.appendChild(message);
+        messages.appendChild(row);
         messages.scrollTop = messages.scrollHeight;
     }
 
@@ -125,15 +135,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function showTyping() {
         const typing = document.createElement("div");
-        typing.className = "message message-bot typing-indicator";
+        typing.className = "message-row message-row-bot typing-indicator";
         typing.id = "typingIndicator";
-        typing.innerHTML =
-            '<div class="typing"><span></span><span></span><span></span></div>';
+        typing.innerHTML = `
+            <img class="message-avatar" src="${botLogo}" alt="" loading="lazy">
+            <div class="message-stack">
+                <span class="message-author">GhinaTour</span>
+                <div class="message message-bot">
+                    <div class="typing"><span></span><span></span><span></span></div>
+                </div>
+            </div>
+        `;
         messages.appendChild(typing);
         messages.scrollTop = messages.scrollHeight;
     }
 
     function hideTyping() {
         document.getElementById("typingIndicator")?.remove();
+    }
+
+    function closeChatbot() {
+        container.classList.remove("active");
     }
 });

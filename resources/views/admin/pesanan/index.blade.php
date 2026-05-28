@@ -3,21 +3,21 @@
 @section('header', 'Daftar Pesanan')
 
 @section('content')
-    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
-        <h1 class="text-2xl font-bold">Pesanan</h1>
+    <div class="mb-6 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
+        <h1 class="text-2xl font-bold text-admin-text">Pesanan</h1>
         
-        <div class="flex flex-wrap items-center gap-3">
-            <form id="filterForm" action="{{ route('admin.pesanan.index') }}" method="GET" class="flex flex-wrap items-center gap-2">
+        <div class="flex w-full flex-wrap items-center gap-3 md:w-auto">
+            <form id="filterForm" action="{{ route('admin.pesanan.index') }}" method="GET" class="flex w-full flex-wrap items-center gap-2 md:w-auto">
                 {{-- Search bar with icon inside --}}
-                <div class="relative">
+                <div class="relative w-full sm:w-auto">
                     <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-admin-muted pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                     <input type="text" name="search" placeholder="Cari pesanan..." value="{{ request('search') }}"
-                        class="pl-9 pr-3 py-2 text-sm rounded-lg border border-admin-border bg-white dark:bg-neutral-800 focus:ring-2 focus:ring-amber-500 outline-none w-48">
+                        class="min-h-11 w-full rounded-lg border border-admin-border bg-admin-card py-2 pl-9 pr-3 text-sm text-admin-text outline-none placeholder:text-admin-muted focus:ring-2 focus:ring-amber-500 sm:w-56">
                 </div>
                 
                 {{-- Status dropdown (auto-submit) --}}
                 <select name="status" onchange="document.getElementById('filterForm').submit()"
-                    class="px-3 py-2 text-sm rounded-lg border border-admin-border bg-white dark:bg-neutral-800 focus:ring-2 focus:ring-amber-500 outline-none">
+                    class="min-h-11 w-full rounded-lg border border-admin-border bg-admin-card px-3 py-2 text-sm text-admin-text outline-none focus:ring-2 focus:ring-amber-500 sm:w-auto">
                     <option value="">Semua Status</option>
                     <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
                     <option value="selesai" {{ request('status') == 'selesai' ? 'selected' : '' }}>Selesai</option>
@@ -26,23 +26,23 @@
 
                 {{-- Date picker (auto-submit) --}}
                 <input type="date" name="tanggal" value="{{ request('tanggal') }}" onchange="document.getElementById('filterForm').submit()"
-                    class="px-3 py-2 text-sm rounded-lg border border-admin-border bg-white dark:bg-neutral-800 focus:ring-2 focus:ring-amber-500 outline-none">
+                    class="admin-date-input min-h-11 w-full rounded-lg border border-admin-border bg-admin-card px-3 py-2 text-sm text-admin-text outline-none focus:ring-2 focus:ring-amber-500 sm:w-auto">
                 
                 @if(request()->anyFilled(['search', 'status', 'tanggal']))
-                    <a href="{{ route('admin.pesanan.index') }}" class="text-xs text-red-500 hover:underline font-medium">Reset</a>
+                    <a href="{{ route('admin.pesanan.index') }}" class="inline-flex min-h-11 items-center text-xs font-medium text-red-500 hover:underline">Reset</a>
                 @endif
             </form>
 
-            <div class="flex flex-wrap items-center gap-2">
+            <div class="flex w-full flex-wrap items-center gap-2 sm:w-auto">
                 <a href="{{ route('admin.pesanan.create') }}"
-                    class="inline-flex items-center gap-2 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white text-sm font-medium rounded-lg transition-colors">
+                    class="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-amber-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-amber-600 sm:w-auto">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
                     Tambah Pesanan
                 </a>
                 <a href="{{ route('admin.pesanan.create-custom') }}"
-                    class="inline-flex items-center gap-2 px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white text-sm font-medium rounded-lg transition-colors">
+                    class="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-purple-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-purple-600 sm:w-auto">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
@@ -52,9 +52,9 @@
         </div>
     </div>
 
-    <div class="bg-admin-card rounded-xl border border-admin-border overflow-hidden">
+    <div class="overflow-hidden rounded-xl border border-admin-border bg-admin-card text-admin-text">
         <div class="overflow-x-auto">
-            <table class="w-full border-collapse">
+            <table class="min-w-[920px] w-full border-collapse">
                 <thead>
                     <tr class="bg-admin-bg">
                         <th
@@ -86,13 +86,13 @@
                 <tbody>
                     @forelse($pesanans as $p)
                         <tr
-                            class="border-b border-admin-border hover:bg-neutral-50 dark:hover:bg-neutral-800/50">
+                            class="border-b border-admin-border text-admin-text transition-colors hover:bg-admin-bg">
                             <td class="px-4 py-3 text-sm font-mono text-purple-600">{{ $p->invoice }}</td>
                             <td class="px-4 py-3">
-                                <div class="font-medium text-sm">{{ $p->nama_pemesan }}</div>
-                                <div class="text-xs text-neutral-400">{{ $p->no_hp }}</div>
+                                <div class="text-sm font-medium text-admin-text">{{ $p->nama_pemesan }}</div>
+                                <div class="text-xs text-admin-muted">{{ $p->no_hp }}</div>
                             </td>
-                            <td class="px-4 py-3 text-sm">
+                            <td class="px-4 py-3 text-sm text-admin-text">
                                 @if($p->is_custom)
                                     <span class="text-amber-600 font-medium">Custom Order</span>
                                     <div class="text-xs text-admin-muted mt-1">
@@ -102,9 +102,9 @@
                                     {{ $p->paket->nama_paket ?? '-' }}
                                 @endif
                             </td>
-                            <td class="px-4 py-3 text-sm">{{ \Carbon\Carbon::parse($p->tanggal_acara)->format('d M Y') }}
+                            <td class="px-4 py-3 text-sm text-admin-text">{{ \Carbon\Carbon::parse($p->tanggal_acara)->format('d M Y') }}
                             </td>
-                            <td class="px-4 py-3 text-sm">{{ $p->jumlah_orang ?? '-' }} pax</td>
+                            <td class="px-4 py-3 text-sm text-admin-text">{{ $p->jumlah_orang ?? '-' }} pax</td>
                             <td class="px-4 py-3 text-sm">
                                 <div class="font-semibold text-admin-text">
                                     Rp {{ number_format($p->total_harga, 0, ',', '.') }}
@@ -129,7 +129,7 @@
                             <td class="px-4 py-3 text-center">
                                 <div class="flex items-center justify-center gap-1">
                                     <a href="{{ route('admin.pesanan.show', $p->id) }}"
-                                        class="p-1.5 text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg">
+                                        class="flex min-h-11 min-w-11 items-center justify-center rounded-lg text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -138,7 +138,7 @@
                                         </svg>
                                     </a>
                                     <a href="{{ route('admin.pesanan.edit', $p->id) }}"
-                                        class="p-1.5 text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-900/20 rounded-lg">
+                                        class="flex min-h-11 min-w-11 items-center justify-center rounded-lg text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-900/20">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -149,7 +149,7 @@
                                         data-confirm-message="Data akan hilang dan tidak bisa dikembalikan">
                                         @csrf @method('DELETE')
                                         <button type="submit"
-                                            class="p-1.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg">
+                                            class="flex min-h-11 min-w-11 items-center justify-center rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                     d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -161,7 +161,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="px-4 py-10 text-center text-neutral-400">Belum ada pesanan</td>
+                            <td colspan="8" class="px-4 py-10 text-center text-admin-muted">Belum ada pesanan</td>
                         </tr>
                     @endforelse
                 </tbody>

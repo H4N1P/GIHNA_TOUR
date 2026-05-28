@@ -3,7 +3,7 @@
 @section('header', 'Tambah Paket Tour')
 
 @section('content')
-    <form action="{{ route('admin.paket.store') }}" method="POST" enctype="multipart/form-data" class="max-w-4xl space-y-6">
+    <form action="{{ route('admin.paket.store') }}" method="POST" enctype="multipart/form-data" class="w-full max-w-4xl space-y-6">
         @csrf
 
         {{-- ── Informasi Paket ── --}}
@@ -89,7 +89,7 @@
                     </p>
                 </div>
                 <button type="button" onclick="addDestinasiField()"
-                    class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors border border-blue-200 dark:border-blue-800">
+                    class="inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-blue-200 px-3 py-2 text-sm font-medium text-blue-600 transition-colors hover:bg-blue-50 dark:border-blue-800 dark:text-blue-400 dark:hover:bg-blue-900/20">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
@@ -113,7 +113,7 @@
                     </p>
                 </div>
                 <button type="button" onclick="addFasilitasField()"
-                    class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-colors border border-green-200 dark:border-green-800">
+                    class="inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-green-200 px-3 py-2 text-sm font-medium text-green-600 transition-colors hover:bg-green-50 dark:border-green-800 dark:text-green-400 dark:hover:bg-green-900/20">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
@@ -136,7 +136,7 @@
                     <p class="text-sm text-admin-muted mt-0.5">Jadwal harian kegiatan/acara paket tour</p>
                 </div>
                 <button type="button" onclick="addRundownField()"
-                    class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-lg transition-colors border border-purple-200 dark:border-purple-800">
+                    class="inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-purple-200 px-3 py-2 text-sm font-medium text-purple-600 transition-colors hover:bg-purple-50 dark:border-purple-800 dark:text-purple-400 dark:hover:bg-purple-900/20">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
@@ -151,13 +151,13 @@
         </div>
 
         {{-- Actions --}}
-        <div class="flex items-center justify-end gap-3 pb-4">
+        <div class="flex flex-col-reverse gap-3 pb-4 sm:flex-row sm:items-center sm:justify-end">
             <a href="{{ route('admin.paket.index') }}"
-                class="px-5 py-2.5 text-sm font-medium text-admin-text hover:bg-admin-bg rounded-lg transition-colors">
+                class="inline-flex min-h-11 items-center justify-center rounded-lg px-5 py-2.5 text-sm font-medium text-admin-text transition-colors hover:bg-admin-bg">
                 Batal
             </a>
             <button type="submit"
-                class="px-6 py-2.5 bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold rounded-lg transition-colors">
+                class="inline-flex min-h-11 items-center justify-center rounded-lg bg-amber-500 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-amber-600">
                 Simpan Paket
             </button>
         </div>
@@ -173,16 +173,16 @@
 
             const index = container.querySelectorAll('.field-row').length;
             const div = document.createElement('div');
-            div.className = 'field-row flex gap-3 items-center';
+            div.className = 'field-row flex flex-col gap-3 sm:flex-row sm:items-center';
             div.innerHTML = `
         <span class="w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-bold flex items-center justify-center flex-shrink-0">${index + 1}</span>
         <input type="text" name="destinasis[${index}][nama_destinasi]" value="${value}"
-            class="flex-1 px-4 py-2.5 rounded-lg border border-admin-border bg-admin-card text-admin-text focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors"
+            class="w-full min-w-0 flex-1 px-4 py-2.5 rounded-lg border border-admin-border bg-admin-card text-admin-text focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors"
             placeholder="Nama destinasi (contoh: Mekkah, Madinah)">
         <input type="file" name="destinasis[${index}][image]" accept="image/*" title="Upload Gambar Destinasi"
-            class="w-48 px-3 py-2 rounded-lg border border-admin-border bg-admin-card text-admin-text focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors text-sm">
+            class="w-full sm:w-48 px-3 py-2 rounded-lg border border-admin-border bg-admin-card text-admin-text focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors text-sm">
         <button type="button" onclick="removeRow(this, 'destinasis-container', 'destinasis-empty', 'Belum ada destinasi. Klik &quot;+ Tambah Destinasi&quot; untuk menambahkan.')"
-            class="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors flex-shrink-0">
+            class="min-h-11 min-w-11 p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors flex-shrink-0">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
             </svg>
@@ -198,21 +198,21 @@
 
             const index = container.querySelectorAll('.field-row').length;
             const div = document.createElement('div');
-            div.className = 'field-row flex gap-3 items-center';
+            div.className = 'field-row flex flex-col gap-3 sm:flex-row sm:items-center';
             div.innerHTML = `
         <input type="text" name="fasilitas[${index}][nama_fasilitas]" value="${nama}"
-            class="flex-1 px-4 py-2.5 rounded-lg border border-admin-border bg-admin-card text-admin-text focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors"
+            class="w-full min-w-0 flex-1 px-4 py-2.5 rounded-lg border border-admin-border bg-admin-card text-admin-text focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors"
             placeholder="Nama fasilitas (contoh: Hotel Bintang 5)">
         <input type="file" name="fasilitas[${index}][image]" accept="image/*" title="Upload Gambar Fasilitas"
-            class="w-48 px-3 py-2 rounded-lg border border-admin-border bg-admin-card text-admin-text focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors text-sm">
+            class="w-full sm:w-48 px-3 py-2 rounded-lg border border-admin-border bg-admin-card text-admin-text focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors text-sm">
         <select name="fasilitas[${index}][tipe_fasilitas]"
-            class="w-36 px-3 py-2.5 rounded-lg border border-admin-border bg-admin-card text-admin-text focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors text-sm">
+            class="w-full sm:w-36 px-3 py-2.5 rounded-lg border border-admin-border bg-admin-card text-admin-text focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors text-sm">
             <option value="konsumsi" ${tipe === 'konsumsi' ? 'selected' : ''}>🍽 Konsumsi</option>
             <option value="akomodasi" ${tipe === 'akomodasi' ? 'selected' : ''}>🏨 Akomodasi</option>
             <option value="transportasi" ${tipe === 'transportasi' ? 'selected' : ''}>🚌 Transportasi</option>
         </select>
         <button type="button" onclick="removeRow(this, 'fasilitas-container', 'fasilitas-empty', 'Belum ada fasilitas. Klik &quot;+ Tambah Fasilitas&quot; untuk menambahkan.')"
-            class="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors flex-shrink-0">
+            class="min-h-11 min-w-11 p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors flex-shrink-0">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
             </svg>
@@ -250,7 +250,7 @@
                 </div>
                 <div class="md:col-span-1 flex items-end">
                     <button type="button" onclick="removeRundownRow(this)"
-                        class="w-full p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors flex-shrink-0 flex items-center justify-center">
+                        class="w-full min-h-11 p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors flex-shrink-0 flex items-center justify-center">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                         </svg>

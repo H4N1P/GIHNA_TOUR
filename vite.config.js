@@ -11,6 +11,7 @@ export default defineConfig({
                 'resources/css/admin.css',
                 'resources/css/chatbot.css',
                 'resources/js/app.js',
+                'resources/js/admin-dashboard.js',
             ],
             refresh: true,
         }),
