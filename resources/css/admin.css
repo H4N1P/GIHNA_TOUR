@@ -441,3 +441,62 @@ form[data-confirm].is-confirm-pending button:not([type]) {
     width: 100%;
   }
 }
+
+/* ── Admin Pagination — force light mode by default ── */
+.admin-content nav[aria-label="Pagination Navigation"] span,
+.admin-content nav[aria-label="Pagination Navigation"] a,
+.admin-content nav[aria-label="Pagination Navigation"] button {
+  background-color: #ffffff !important;
+  color: #6b7280 !important;
+  border-color: #d1d5db !important;
+}
+
+.admin-content nav[aria-label="Pagination Navigation"] span[aria-current="page"] span {
+  background-color: #f59e0b !important;
+  color: #ffffff !important;
+  border-color: #f59e0b !important;
+}
+
+.admin-content nav[aria-label="Pagination Navigation"] a:hover {
+  background-color: #f9fafb !important;
+  color: #374151 !important;
+}
+
+.admin-content nav[aria-label="Pagination Navigation"] span[aria-disabled="true"] span {
+  background-color: #ffffff !important;
+  color: #d1d5db !important;
+  border-color: #d1d5db !important;
+  cursor: not-allowed;
+}
+
+/* Admin Pagination — dark theme overrides */
+[data-theme="dark"] .admin-content nav[aria-label="Pagination Navigation"] span,
+[data-theme="dark"] .admin-content nav[aria-label="Pagination Navigation"] a,
+[data-theme="dark"] .admin-content nav[aria-label="Pagination Navigation"] button {
+  background-color: var(--admin-card) !important;
+  color: var(--admin-muted) !important;
+  border-color: var(--admin-border) !important;
+}
+
+[data-theme="dark"] .admin-content nav[aria-label="Pagination Navigation"] span[aria-current="page"] span {
+  background-color: #f59e0b !important;
+  color: #ffffff !important;
+  border-color: #f59e0b !important;
+}
+
+[data-theme="dark"] .admin-content nav[aria-label="Pagination Navigation"] a:hover {
+  background-color: var(--admin-bg) !important;
+  color: var(--admin-text) !important;
+}
+
+[data-theme="dark"] .admin-content nav[aria-label="Pagination Navigation"] span[aria-disabled="true"] span {
+  background-color: var(--admin-card) !important;
+  color: var(--admin-border) !important;
+  border-color: var(--admin-border) !important;
+}
+
+/* Pagination results text (e.g., "Showing 1 to 10 of 50 results") */
+.admin-content nav[aria-label="Pagination Navigation"] p {
+  color: var(--admin-muted) !important;
+}
+

@@ -39,7 +39,7 @@
                         Tanggal Acara <span class="text-red-500">*</span>
                     </label>
                     <input type="date" name="tanggal_acara" value="{{ old('tanggal_acara') }}" required
-                        class="w-full px-4 py-2.5 rounded-lg border border-admin-border bg-white dark:bg-neutral-800 focus:ring-2 focus:ring-amber-500 transition-colors">
+                        class="admin-date-input w-full px-4 py-2.5 rounded-lg border border-admin-border bg-admin-card focus:ring-2 focus:ring-amber-500 transition-colors">
                     @error('tanggal_acara')
                         <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                     @enderror

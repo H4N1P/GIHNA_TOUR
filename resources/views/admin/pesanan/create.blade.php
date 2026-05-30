@@ -61,7 +61,7 @@
                         Tanggal Acara <span class="text-red-500">*</span>
                     </label>
                     <input type="date" name="tanggal_acara" value="{{ old('tanggal_acara') }}" required
-                        class="w-full px-4 py-2.5 rounded-lg border border-admin-border bg-admin-card focus:ring-2 focus:ring-amber-500 transition-colors">
+                        class="admin-date-input w-full px-4 py-2.5 rounded-lg border border-admin-border bg-admin-card focus:ring-2 focus:ring-amber-500 transition-colors">
                     @error('tanggal_acara')
                         <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                     @enderror
@@ -105,7 +105,7 @@
                     </label>
                     <input type="number" name="total_harga" id="total_harga" value="{{ old('total_harga', 0) }}" required
                         min="0"
-                        class="w-full px-4 py-2.5 rounded-lg border border-admin-border bg-admin-bg focus:ring-2 focus:ring-amber-500 transition-colors"
+                        class="w-full px-4 py-2.5 rounded-lg border border-admin-border bg-neutral-100 dark:bg-neutral-700 focus:ring-2 focus:ring-amber-500 transition-colors"
                         readonly>
                     @error('total_harga')
                         <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
@@ -119,7 +119,7 @@
                             0</span>
                     </div>
                     <div
-                        class="bg-green-50 dark:bg-green-900/20 rounded-xl p-4 flex items-center justify-between border border-green-200 dark:border-green-800">
+                        class="bg-green-50 dark:bg-green-900/20 rounded-xl p-4 flex items-center justify-between border border-green-300 dark:border-green-700">
                         <span class="font-semibold text-green-700 dark:text-green-400">Total Akhir (Setelah Diskon)</span>
                         <span id="total-akhir" class="text-2xl font-bold text-green-700 dark:text-green-400">Rp 0</span>
                     </div>
