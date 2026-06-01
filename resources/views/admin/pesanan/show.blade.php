@@ -13,9 +13,7 @@
         $unitPrice = (float) ($paket->harga_paket ?? 0);
         $subtotal = $unitPrice * $qty;
     } else {
-        $subtotal = $discountPct > 0 && $discountPct < 100
-            ? $total / (1 - ($discountPct / 100))
-            : $total;
+        $subtotal = $discountPct > 0 && $discountPct < 100 ? $total / (1 - $discountPct / 100) : $total;
         $unitPrice = $qty > 0 ? $subtotal / $qty : $subtotal;
     }
 
@@ -28,11 +26,10 @@
     };
 
     $createdDate = \Carbon\Carbon::parse($pesanan->created_at)->format('d F Y');
-    $eventDate = $pesanan->tanggal_acara
-        ? \Carbon\Carbon::parse($pesanan->tanggal_acara)->format('d F Y')
-        : '-';
+    $eventDate = $pesanan->tanggal_acara ? \Carbon\Carbon::parse($pesanan->tanggal_acara)->format('d F Y') : '-';
     $customPlaces = collect($pesanan->custom_places ?? [])->filter();
     $customFacilities = collect($pesanan->custom_fasilitas ?? [])->filter();
+    $company = \App\Models\CompanyProfile::first();
 @endphp
 
 @section('content')
@@ -69,10 +66,22 @@
         @if ($isCustom)
             <section id="invoice-print"
                 class="invoice-sheet invoice-sheet--custom bg-white p-5 text-slate-950 shadow-sm sm:p-6">
-                <div class="mb-4 flex flex-col gap-3 border-b border-slate-200 pb-4 sm:flex-row sm:items-start sm:justify-between">
+                <div
+                    class="mb-4 flex flex-col gap-3 border-b border-slate-200 pb-4 sm:flex-row sm:items-start sm:justify-between">
                     <div>
-                        <h1 class="text-xl font-black leading-tight">Ghinatour Travel</h1>
-                        <p class="mt-1 text-xs font-medium text-slate-600">Jl. Contoh Travel No. 123, Jakarta Selatan</p>
+                        <h1 class="text-xl font-black leading-tight">{{ config('app.name', 'GhinaTour Travel') }}</h1>
+                        <p class="mt-1 text-xs font-semibold">Siap Menemani Perjalanan Nyaman Mu</p>
+                        <div class="mt-5 space-y-1 text-xs leading-relaxed text-slate-600">
+                            @if ($company)
+                                <p>{{ $company->address }}</p>
+                                <p>{{ $company->email }}</p>
+                                @if($company->whatsapp)<p>WA: {{ $company->whatsapp }}</p>@endif
+                            @else
+                                <p>Jl. Di Panjaitan, Purwokerto, Banyumas</p>
+                                <p>Jawa Tengah, Indonesia</p>
+                                <p>ghinatourtravel@gmail.com</p>
+                            @endif
+                        </div>
                     </div>
                     <div class="text-left sm:text-right">
                         <p class="text-xl font-black uppercase tracking-wide text-orange-500">Invoice</p>
@@ -135,7 +144,8 @@
                                 <li class="flex items-center justify-between gap-3 py-1">
                                     <span>{{ $facility['nama_fasilitas'] ?? '-' }}</span>
                                     @if (!empty($facility['tipe_fasilitas']))
-                                        <span class="rounded border border-slate-200 px-2 py-0.5 text-[10px] font-bold capitalize text-slate-600">
+                                        <span
+                                            class="rounded border border-slate-200 px-2 py-0.5 text-[10px] font-bold capitalize text-slate-600">
                                             {{ $facility['tipe_fasilitas'] }}
                                         </span>
                                     @endif
@@ -167,7 +177,8 @@
                                 </td>
                                 <td class="py-3 text-right">Rp {{ number_format($unitPrice, 0, ',', '.') }}</td>
                                 <td class="py-3 text-center">{{ $qty }}</td>
-                                <td class="py-3 text-right font-semibold">Rp {{ number_format($subtotal, 0, ',', '.') }}</td>
+                                <td class="py-3 text-right font-semibold">Rp {{ number_format($subtotal, 0, ',', '.') }}
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -181,7 +192,8 @@
                         </div>
                         @if ($discountPct > 0)
                             <div class="flex justify-between">
-                                <span>Diskon ({{ rtrim(rtrim(number_format($discountPct, 2, ',', '.'), '0'), ',') }}%)</span>
+                                <span>Diskon
+                                    ({{ rtrim(rtrim(number_format($discountPct, 2, ',', '.'), '0'), ',') }}%)</span>
                                 <span>- Rp {{ number_format($discountNominal, 0, ',', '.') }}</span>
                             </div>
                         @endif
@@ -197,12 +209,18 @@
                 <div class="bg-[#ff8a4c] px-8 py-8 text-white sm:px-12">
                     <div class="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
                         <div>
-                            <h1 class="text-xl font-black leading-tight">GhinaTour Travel</h1>
+                            <h1 class="text-xl font-black leading-tight">{{ config('app.name', 'GhinaTour Travel') }}</h1>
                             <p class="mt-1 text-xs font-semibold">Siap Menemani Perjalanan Nyaman Mu</p>
                             <div class="mt-5 space-y-1 text-xs leading-relaxed text-white/90">
-                                <p>Jl. Di Panjaitan, Purwokerto, Banyumas</p>
-                                <p>Jawa Tengah, Indonesia</p>
-                                <p>ghinatourtravel@gmail.com</p>
+                                @if ($company)
+                                    <p>{{ $company->address }}</p>
+                                    <p>{{ $company->email }}</p>
+                                    @if($company->whatsapp)<p>WA: {{ $company->whatsapp }}</p>@endif
+                                @else
+                                    <p>Jl. Di Panjaitan, Purwokerto, Banyumas</p>
+                                    <p>Jawa Tengah, Indonesia</p>
+                                    <p>ghinatourtravel@gmail.com</p>
+                                @endif
                             </div>
                         </div>
                         <div class="text-left sm:text-right">
@@ -236,7 +254,8 @@
                     <div class="mt-12 overflow-x-auto">
                         <table class="w-full min-w-[620px] text-sm">
                             <thead>
-                                <tr class="border-b border-slate-200 text-xs font-black uppercase tracking-wide text-slate-700">
+                                <tr
+                                    class="border-b border-slate-200 text-xs font-black uppercase tracking-wide text-slate-700">
                                     <th class="py-4 text-left md:pl-24">Deskripsi Paket</th>
                                     <th class="py-4 text-right">Detail Paket</th>
                                 </tr>
@@ -270,7 +289,8 @@
                             </div>
                             @if ($discountPct > 0)
                                 <div class="flex justify-between">
-                                    <span>Diskon ({{ rtrim(rtrim(number_format($discountPct, 2, ',', '.'), '0'), ',') }}%)</span>
+                                    <span>Diskon
+                                        ({{ rtrim(rtrim(number_format($discountPct, 2, ',', '.'), '0'), ',') }}%)</span>
                                     <span>- Rp {{ number_format($discountNominal, 0, ',', '.') }}</span>
                                 </div>
                             @endif
@@ -312,7 +332,7 @@
                 overflow: hidden !important;
             }
 
-            body.printing-invoice > :not(#invoice-print-clone) {
+            body.printing-invoice> :not(#invoice-print-clone) {
                 display: none !important;
             }
 

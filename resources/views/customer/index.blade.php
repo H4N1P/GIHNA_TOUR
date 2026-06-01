@@ -12,7 +12,8 @@
                 style="background-image:url('{{ asset('customer/assets/images/backgrounds/bg-hero.jpg') }}');"></div>
         </video>
 
-        <div class="relative z-20 mx-auto grid min-h-[560px] max-w-7xl items-center px-4 pt-24 sm:min-h-[620px] sm:px-6 lg:min-h-[660px] lg:px-14">
+        <div
+            class="relative z-20 mx-auto grid min-h-[560px] max-w-7xl items-center px-4 pt-24 sm:min-h-[620px] sm:px-6 lg:min-h-[660px] lg:px-14">
             <div class="fade-in">
                 <h1 class="max-w-[820px] text-4xl font-extrabold leading-tight text-white sm:text-[42px] lg:text-[58px]">
                     Temukan Pengalaman Wisata Terbaik Bersama Kami
@@ -37,7 +38,8 @@
                     </svg>
                 </div>
                 <div>
-                    <h2 class="text-[26px] font-extrabold t">{{ $pakets->count() }}+</h2>
+                    {{-- <h2 class="text-[26px] font-extrabold t">{{ $pakets->count() }}+</h2> --}}
+                    <h2 class="text-[26px] font-extrabold t">10+</h2>
                     <p class="tm text-sm">Paket Tersedia</p>
                 </div>
             </div>
@@ -72,7 +74,7 @@
                     </svg>
                 </div>
                 <div>
-                    <h2 class="text-[26px] font-extrabold t">50++</h2>
+                    <h2 class="text-[26px] font-extrabold t">30++</h2>
                     <p class="tm text-sm">Destinasi</p>
                 </div>
             </div>
